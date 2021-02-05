@@ -28,5 +28,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Preston Petrie",
-  "license": "AGPL-3.0-only"
+  "license": "GPL-3.0-only"
 }
