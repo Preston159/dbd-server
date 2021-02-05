@@ -25,11 +25,21 @@ const logToFileQueue: string[] = []
  * Initializes the file logger
  */
 export function init(): void {
+    createDirectory()
     closeWriteStream()
     renameOldFile()
     updateFilePath()
     writeStream = fs.createWriteStream(filePath)
     log('File logger initialized')
+}
+
+/**
+ * Creates the 'logs' directory if it doesn't exist
+ */
+function createDirectory() {
+    if(!fs.existsSync(path.join('.', 'logs'))) {
+        fs.mkdirSync(path.join('.', 'logs'))
+    }
 }
 
 /**
