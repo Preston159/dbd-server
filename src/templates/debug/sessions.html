@@ -1,0 +1,26 @@
+<style>
+    th, td {
+        display: inline-block;
+        width: 350px;
+        height: 1rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 5px;
+        margin: 0;
+        border: 1px solid black;
+    }
+    tr {
+        white-space: nowrap;
+    }
+    table {
+        table-layout: fixed;
+    }
+</style>
+Active sessions:<br />
+<table>
+    <tr><th>userId</th><th>bhvrSession</th><th>fake?</th></tr>
+    {% for session in sessions %}
+    <tr><td><a href="/query?type=USER_ID&id={{ session.clientIds.userId }}">{{ session.clientIds.userId }}</a></td>{{ session.bhvrSession | td }}{{ ("true" if session.isFake else "false") | td}}</tr>
+    {% endfor %}
+</table>

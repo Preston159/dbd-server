@@ -1,0 +1,16 @@
+{
+    "include": [
+        "src/*.ts",
+        ".eslintrc.cjs"
+    ],
+    "compilerOptions": {
+        "removeComments": true,
+        "target": "ES2015",
+        "moduleResolution": "node",
+        "outDir": "build/",
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "allowSyntheticDefaultImports": true
+    }
+}

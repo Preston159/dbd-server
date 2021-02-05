@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dead by Daylight v3.0.0-dev Matchmaking</title>
+        <meta charset="utf-8" />
+        <script type="text/javascript">
+            var suffixRegex = /^[0-9a-fA-F]*$/
+            function testSuffix(suffix) {
+                return suffixRegex.test(suffix);
+            }
+            function submitId(type) {
+                if(type !== 'user' && type !== 'match') {
+                    return;
+                }
+                var textField = document.getElementById(type + '-suffix');
+                var suffix = textField.value;
+                if(typeof suffix !== 'string' || suffix.length !== 12) {
+                    alert('You should have entered 12 characters. Try again.');
+                    return;
+                }
+                if(!testSuffix(suffix)) {
+                    alert('User ID should contain only numbers 0-9 and letters a-f.');
+                    return;
+                }
+                var id = '00000000-0000-0000-0000-' + suffix.toLowerCase();
+                document.location.href = '/' + type + '/' + id;
+            }
+            function listenForReturn(type, event) {
+                if(event.keyCode === 13) {
+                    submitId(type);
+                }
+            }
+            window.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('user-suffix').addEventListener('keyup', (event) => listenForReturn('user', event));
+                document.getElementById('match-suffix').addEventListener('keyup', (event) => listenForReturn('match', event));
+            })
+        </script>
+        <style>
+            input[type="text"] {
+                outline: none;
+            }
+            #suffix, #suffix:active {
+                border: 1px solid black;
+                border-radius: 2px;
+                padding-left: 0;
+            }
+            table input[type="text"] {
+                padding: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Please enter a player ID:</p>
+        <p>Your player ID can be found at the bottom of the settings page in-game.</p>
+        <table>
+            <tr>
+                <td><label for="user-suffix">User:&nbsp;</label></td>
+                <td><span><span class="prefix">00000000-0000-0000-0000-</span><input type="text" id="user-suffix" name="user-suffix" /></span></td>
+                <td><button type="button" id="user-submit-btn" onclick="submitId('user');" tabindex="-1">Submit</button></td>
+            </tr>
+        </table>
+    </body>
+</html>

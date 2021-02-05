@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Error</title>
+        <meta charset="utf-8" />
+        <style>
+            .error-msg {
+                font-size: 18pt;
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <span class="error-msg">{{ error }}</span>
+        {% if linktomain %}
+        <p>Click <a href="/">here</a> to return to the main page.</p>
+        {% endif %}
+    </body>
+</html>

@@ -1,0 +1,33 @@
+<style>
+    th, td {
+        display: inline-block;
+        width: 350px;
+        height: 1rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 5px;
+        margin: 0;
+        border: 1px solid black;
+    }
+    tr {
+        white-space: nowrap;
+    }
+    table {
+        table-layout: fixed;
+    }
+</style>
+Killer Queue:<br />
+<table>
+    <tr><th>userId</th><th>bhvrSession</th><th>lastCheckedForMatch</th></tr>
+    {% for killer in killers %}
+    <tr><td><a href="/query?type=USER_ID&id={{ killer.userId }}">{{ killer.userId }}</a></td><td>{{ killer.bhvrSession }}</td><td>{{ killer.lastCheckedForMatch }}</td></tr>
+    {% endfor %}
+</table><br />
+Survivor Queue:<br />
+<table>
+    <tr><th>userId</th><th>bhvrSession</th><th>lastCheckedForMatch</th></tr>
+    {% for survivor in survivors %}
+    <tr><td><a href="/query?type=USER_ID&id={{ survivor.userId }}">{{ survivor.userId }}</a></td><td>{{ survivor.bhvrSession }}</td><td>{{ survivor.lastCheckedForMatch }}</td></tr>
+    {% endfor %}
+</table>

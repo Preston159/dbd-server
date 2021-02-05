@@ -1,0 +1,218 @@
+{
+    "MATCHMAKING_INCENTIVE_CONFIG": {
+        "killer": {
+            "acceptable_ratio": 0.33,
+            "moderate_ratio": 0.33,
+            "long_ratio": 0.33
+        },
+        "survivor": {
+            "acceptable_ratio": 0.86,
+            "moderate_ratio": 0.86,
+            "long_ratio": 0.86
+        }
+    },
+    "COMMANDS_MENU": [
+        "DBD_AddBloodPoints 1000000",
+        "DBD_AddCells 50000",
+        "DBD_AddFearTokens 100000",
+        "DBD_AddEverythingToInventory 1",
+        "dbd.UnlockAllCustomizationItems 1"
+    ],
+    "MATCHMAKING_ALLOW_CROSSPLAY": "true",
+    "SOCIAL_PLATFORM_FRIENDLIST_QUERY_RATE": "10",
+    "MATCHMAKING_CROSSPLAY_PLATFORMS": {
+        "ps4": true,
+        "grdk": true,
+        "dmm": false,
+        "android": false,
+        "steam": true,
+        "xbox": true,
+        "ios": false,
+        "switch": true
+    },
+    "BUTTON_SEQUENCE_ENABLE": {
+        "WalesCypher": true
+    },
+    "KRAKEN_RSA_PUBLIC_KEY": "",
+    "GAMELIFT_IDLE_INSTANCE_SHUTDOWN_TIMER": "86400",
+    "CANCEL_MATCH_ON_DISCONNECT_DURING_LOADING": "false",
+    "GAMELIFT_INSTANCE_SHUTDOWN_TIMER": "7200",
+    "READ_ONLY_CONFIGS": {
+        "readonlyConfigs": [
+            "ANALYTICS_RULES",
+            "ANALYTICS_RULES_DEDICATED_SERVER",
+            "READ_ONLY_CONFIGS"
+        ]
+    },
+    "MS_ENDPOINT": "https://xbox1-dev1.bhvrdbd.com/restservice.svc",
+    "offenceCategories": {
+        "uncategorized": {
+            "enabled": false
+        }
+    },
+    "SEGMENTATION_V2_ENABLED": "true",
+    "CERTIFICATE_EMAIL_NOTIFICATION": "",
+    "COMMANDS_BOOT": [
+        "EnableCheats",
+        "dbd.EnableCheatsPersistently 1"
+    ],
+    "AVAILABLE_PLATFORMS": [
+        {
+            "data": "Core",
+            "children": [
+                {
+                    "data": "steam",
+                    "label": "Steam"
+                },
+                {
+                    "data": "grdk",
+                    "label": "Windows Store"
+                },
+                {
+                    "data": "Consoles",
+                    "children": [
+                        {
+                            "data": "ps4",
+                            "label": "PlayStation"
+                        },
+                        {
+                            "data": "xbox",
+                            "label": "XBOX"
+                        },
+                        {
+                            "data": "switch",
+                            "label": "Switch"
+                        }
+                    ],
+                    "label": "Consoles"
+                }
+            ],
+            "label": "Core"
+        },
+        {
+            "data": "Mobile",
+            "children": [
+                {
+                    "data": "android",
+                    "label": "Android"
+                },
+                {
+                    "data": "ios",
+                    "label": "iOS"
+                }
+            ],
+            "label": "Mobile"
+        }
+    ],
+    "GAME_CLIENT_VERSION_CHECK_ENABLED": "true",
+    "FRAME_HIKE_ANALYTIC_LOG_BUFFER_SIZE": "10",
+    "ANALYTICS_RULES_DEDICATED_SERVER": {
+        "KL": [],
+        "BL": [],
+        "KAL": []
+    },
+    "CLIENT_VERSION": {
+        "ios": {
+            "date": "2020-02-05T00:00:00.000Z",
+            "version": "3.4.0"
+        },
+        "android": {
+            "date": "2020-02-05T00:00:00.000Z",
+            "version": "3.4.0"
+        }
+    },
+    "VER_LATEST_CLIENT_DATA": {
+        "c": "1.0.0-1533244367"
+    },
+    "RICH_PRESENCE_SERVER_TIMER_RATE": "600",
+    "CLIENT_VERSION_V2": {
+        "NetEase": {
+            "ios": {
+                "date": "2020-02-05T00:00:00.000Z",
+                "version": "3.4.0"
+            },
+            "android": {
+                "date": "2020-02-05T00:00:00.000Z",
+                "version": "3.4.0"
+            }
+        },
+        "fallback": {
+            "ios": {
+                "date": "2020-02-05T00:00:00.000Z",
+                "version": "3.4.0"
+            },
+            "android": {
+                "date": "2020-02-05T00:00:00.000Z",
+                "version": "3.4.0"
+            }
+        }
+    },
+    "SOCIAL_FRIENDLIST_MANUAL_UPDATE_MIN_DELAY": "60",
+    "ANALYTICS_ENDPOINTS": {},
+    "MATCHMAKING_CONFIG": {
+        "Mobile": {
+            "dbd_match_making_filter_unidirectional_always": true,
+            "dbd_match_making_filter_good_latency": 120,
+            "dbd_match_making_filter_skip_region_checks": true,
+            "dbd_match_making_filter_min_geo_distance": 1000,
+            "dbd_match_making_filter_ok_latency": 250,
+            "dbd_match_making_filter_expansion_duration": 90000,
+            "dbd_match_making_filter_max_geo_distance": 7000,
+            "dbd_match_making_filter_unidirectional": true,
+            "dbd_match_making_filter_max_rank_diff": 20,
+            "dbd_match_making_filter_min_rank_diff": 1
+        }
+    },
+    "ASSET_MANAGEMENT_CDN_PATH": "https://cdn.dev.dbd.bhvronline.com",
+    "CDN_ROOT_FOLDER_PATH": "b114b47d-a3e6-44b7-90eb-cd110b09acc1",
+    "COMMANDS_QATEST": [
+        "DBD_AddBloodPoints 100000",
+        "DBD_AddCells 5000",
+        "DBD_AddEverythingToInventory 1",
+        "dbd.UnlockAllCustomizationItems 1"
+    ],
+    "clientData": {
+        "leaderboardId": "4.0.0_323115dev",
+        "catalogId": "4.0.0_323115dev",
+        "subscriptionId": "mcmallet_m_3.3.3_0dev",
+        "statesPermissionsId": "mcmallet_m_3.3.3_0dev"
+    },
+    "ANALYTICS_RULES": {
+        "DD": [],
+        "KL": [],
+        "BL": [],
+        "AF": [],
+        "KAL": []
+    },
+    "RECOMMENDATION_RECENT_RELEASE_THRESHOLD": "7",
+    "COMMANDS_DS_BOOT": [
+        "EnableCheats",
+        "dbd.EnableCheatsPersistently 1"
+    ],
+    "DBD_USING_LOOT_TABLES": "False",
+    "GAMELIFT_ENDPOINTS": {},
+    "VER_CLIENT_DATA": {
+        "3.2.0_235824dev": "3.2.0_235824dev-1575304523"
+    },
+    "SOCIAL_CROSSFRIENDS_PLATFORMS": {
+        "ps4": false,
+        "grdk": true,
+        "dmm": false,
+        "android": false,
+        "steam": true,
+        "xbox": false,
+        "ios": false,
+        "switch": false
+    },
+    "FRAME_HIKE_THRESHOLD": "10",
+    "RICH_PRESENCE_PLAYER_TIMER_RATE": "600",
+    "MATCHMAKING_USE_QUEUE_API": "true",
+    "MATCHMAKING_QUEUE_DASHBOARD_URL": "",
+    "DELTA_DNA_HASH_KEY": "wg5AL9shgIrmvj4abQfWnXHD25r8DZbS",
+    "DELTADNA_ENGAGE_TIMEOUT": "10000",
+    "APPSFLYER_CUSTOMER_ID_ENABLED": "False",
+    "MS_ENDPOINT_GRDK": "https://wstore-dev1.bhvrdbd.com/restservice.svc",
+    "SOCIAL_BACKEND_FRIEND_SYNC_RATE": "60",
+    "MATCHMAKING_GAMELIFT_DASHBOARD_URL": "",
+    "BAN_REASON_ENUM": "{\"0\":\"Harassment\",\"1\":\"Griefing\",\"2\":\"Exploits\",\"3\":\"Unsportsmanlike\"}"
+}

@@ -1,0 +1,26 @@
+<style>
+    th, td {
+        display: inline-block;
+        width: 350px;
+        height: 1rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 5px;
+        margin: 0;
+        border: 1px solid black;
+    }
+    tr {
+        white-space: nowrap;
+    }
+    table {
+        table-layout: fixed;
+    }
+</style>
+Open Lobbies:<br />
+<table>
+    <tr><th>matchId</th><th>host.userId</th><th>isReady</th><th>sessionSettings</th><th>hasStarted</th></tr>
+    {% for lobby in lobbies %}
+    <tr><td><a href="/query?type=LOBBY_ID&id={{ lobby.id }}">{{ lobby.id }}</a></td><td>{{ lobby.host.userId }}</td><td>{% if lobby.isReady %}true{% else %}false{% endif %}</td><td>{{ lobby.sessionSettings }}</td><td>{{ lobby.hasStarted }}</td></tr>
+    {% endfor %}
+</table>

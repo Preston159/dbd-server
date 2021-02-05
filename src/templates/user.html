@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>User Info</title>
+        <meta charset="utf-8" />
+        <style>
+            td {
+                border: 1px solid black;
+                min-width: 200px;
+            }
+            .long-text {
+                display: inline-block;
+                height: 1rem;
+                line-height: 1rem;
+                max-width: 500px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+        </style>
+    </head>
+    <body>
+        {% if not session %}
+        <span>A user with this ID could not be found. Click <a href="/">here</a> to return to the main page.</span>
+        {% else %}
+        <span class="long-text">playerUId: {{ profile.playerUId | spanselectall }}</span><br />
+        <!--<span class="long-text">name: {{ name | spanselectall }}</span><br />-->
+        <span class="long-text">userId: {{ session.clientIds.userId | spanselectall }}</span><br />
+        <span class="long-text">bhvrSession: {{ session.bhvrSession | spanselectall }}</span><br />
+        <span>Download save data:</span>
+        <a href="/user/{{ session.clientIds.userId }}/saveData.bin">Binary (Encrypted)</a>
+        <a href="/user/{{ session.clientIds.userId }}/saveData.json">JSON (Unencrypted)</a>
+        <br />
+        <span style="text-decoration: underline;">Save Data</span><br />
+        <br />
+        <table>
+            {% set camper = profile.selectedCamperIndex %}
+            {% set slasher = profile.selectedSlasherIndex %}
+            <tr>
+                <td>Selected Survivor</td><td>{{ camper | idtoname }} ({{ camper }})</td>
+            </tr>
+            <tr>
+                <td>Selected Killer</td><td>{{ slasher | idtoname }} ({{ slasher }})</td>
+            </tr>
+            <tr>
+                <td>First Time Playing</td>{{ profile.firstTimePlaying | td }}
+            </tr>
+            <tr>
+                <td>Cumulative Playtime</td>{{ profile.cumulativePlaytime | td }}
+            </tr>
+            <tr>
+                <td>Bloodpoints</td>{{ profile.experience | td }}
+            </tr>
+        </table><br />
+        {% for character in profile.characterData %}
+        <p style="font-size: 22pt;">{{ character.key | idtoname }}</p>
+        <table>
+            <tr>
+                <td>Level</td>{{ character.data.bloodwebLevel | td }}
+            </tr>
+            <tr>
+                <td>Bloodweb Level??</td>{{ character.data.bloodWebData.level | td }}
+            </tr>
+        </table>
+        <p>Loadout</p>
+        <table>
+            <tr>
+                <td>Item</td>{{ character.data.characterLoadoutData.item | td }}
+            </tr>
+            <tr>
+                <td>Item Add-ons</td>{{ character.data.characterLoadoutData.itemAddOns | dump | td }}
+            </tr>
+            <tr>
+                <td>Survivor Offering</td>{{ character.data.characterLoadoutData.camperFavor | td }}
+            </tr>
+            <tr>
+                <td>Power</td>{{ character.data.characterLoadoutData.power | td }}
+            </tr>
+            <tr>
+                <td>Power Add-ons</td>{{ character.data.characterLoadoutData.powerAddOns | dump | td }}
+            </tr>
+            <tr>
+                <td>Killer Offering</td>{{ character.data.characterLoadoutData.slasherFavor | td }}
+            </tr>
+        </table>
+        <p>Inventory</p>
+        <table>
+            {% for item in character.data.inventory %}
+            {{ item.i | invitemtorow }}
+            {% endfor %}
+        </table>
+
+        {% endfor %}
+        <code>
+            {{ profile | dump }}
+        </code>
+        {% endif %}
+    </body>
+</html>

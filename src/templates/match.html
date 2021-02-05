@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Match Details</title>
+        <meta charset="utf-8" />
+        <style>
+            td {
+                border: 1px solid black;
+                min-width: 200px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Match {{ lobby.id }}</h1>
+        {% if not lobby.isReady %}
+            <p>Lobby not yet ready to join. Waiting for host to connect.</p>
+        {% else %}
+            {% if not lobby.hasStarted %}
+                <p>Lobby ready to join. Current player count: {{ lobby.nonHosts.length + 1 }}</p>
+            {% else %}
+                <p>Match started.</p>
+                <p>Total player count: {{ lobby.matchData.players.length }}</p>
+                <p>Alive player count: {{ lobby.matchData.alivePlayers.length }}</p>
+            {% endif %}
+        {% endif %}
+    </body>
+</html>

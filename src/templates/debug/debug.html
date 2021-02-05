@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Debug Menu</title>
+        <meta charset="utf-8" />
+        <script type="text/javascript">
+            function clickAction(el, event) {
+                event.preventDefault();
+                document.querySelector('iframe').setAttribute('src', el.getAttribute('href'))
+            }
+        </script>
+        <style>
+            iframe {
+                width: 100%;
+                margin: 0;
+                height: 50vh;
+                border: none;
+            }
+            a, a:visited {
+                color: #00d;
+            }
+        </style>
+    </head>
+    <body>
+        {% for action in actions %}
+        <a href="/exec?command={{ action }}" target="_blank" onclick="clickAction(this, event);">{{ action }}</a><br />
+        {% endfor %}
+        <br />
+        <iframe src="about:blank"></iframe>
+    </body>
+</html>
