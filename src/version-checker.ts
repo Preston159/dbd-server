@@ -10,7 +10,7 @@ const RELEASES_URL = 'https://api.github.com/repos/Preston159/dbd-server/tags'
 export function checkVersion(): void {
     const packageJson = JSON.parse(fs.readFileSync(path.join('.', 'package.json')).toString()) as PackageJson
     const verRunning = packageJson.version
-    void fetch(RELEASES_URL, { method: 'GET' })
+    fetch(RELEASES_URL, { method: 'GET' })
         .then(res => res.json() as Promise<GithubTagsResponse>)
         .then(json => {
             console.log(`Running DbD Dev Server v${verRunning}`)
