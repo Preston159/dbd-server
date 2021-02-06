@@ -24,6 +24,7 @@ import { getSteamIdFromToken } from './steam-manager.js'
 import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray } from './session-manager.js'
 import * as StartingValues from './starting-values.js'
 import { DEBUG_REQUIRE_HTTPS, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
+import { checkVersion } from './version-checker.js'
 
 //#region copyright notice
 console.log(
@@ -33,6 +34,8 @@ console.log(
     'under certain conditions; see LICENSE file for details.\n\n'
     )
 //#endregion
+
+checkVersion()
 
 const app = express()
 
