@@ -11,7 +11,7 @@ Because alternative fixes use Behaviour's servers and may not work forever. Addi
 ## How to run
 
 1. Make sure [NodeJS](https://nodejs.org/en/) 14 and [NPM](https://www.npmjs.com/) are installed on the machine you wish to run the server on. Other versions of Node may function, but they have not been tested.
-1. Clone the repository or download and extract a release.
+1. [Download](https://github.com/Preston159/dbd-server/releases) and extract a release.
 1. Run `npm i` to install all necessary dependencies.
 1. Run `npm start` to start the server.
 
