@@ -17,7 +17,7 @@ export function checkVersion(): void {
             const verLatest = json[0].name
             if(verRunning.endsWith('-dev')) {
                 console.log("Stop! You're running a development version.")
-                console.log("If you don't know what you're doing, download the latest version here:")
+                console.log("If you don't know what you're doing, download the latest release here:")
                 console.log(json[0].zipball_url)
             } else {
                 const comparison = compareVersions(verRunning, verLatest)
