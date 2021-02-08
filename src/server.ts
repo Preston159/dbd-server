@@ -1,4 +1,4 @@
-import type { Session, ConfigValue, RequestMethod, RequestType } from './types/types'
+import type { Session, ConfigValue, RequestMethod, RequestType, CliCommand } from './types/types'
 import type { Response, Request } from 'express'
 
 import * as path from 'path'
@@ -21,7 +21,7 @@ import debugResponse, { setResponse, unsetResponse } from './debug-response.js'
 import * as connectionTracker from './connection-tracker.js'
 import respondEmpty, { addAutoResponses } from './respond-empty.js'
 import { getSteamIdFromToken } from './steam-manager.js'
-import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray } from './session-manager.js'
+import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray, getActiveSessionCount } from './session-manager.js'
 import * as StartingValues from './starting-values.js'
 import { DEBUG_REQUIRE_HTTPS, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
 import { checkVersion } from './version-checker.js'
@@ -29,7 +29,7 @@ import { checkVersion } from './version-checker.js'
 //#region copyright notice
 console.log(
     'DbD Dev Server Copyright (C) 2020 Preston Petrie\n' +
-    'This program comes with ABSOLUTELY NO WARRANTY; for details see LICENSE file.\n' +
+    'This program comes with ABSOLUTELY NO WARRANTY; for details type `show w`.\n' +
     'This program is free software, and you are welcome to redistribute it\n' +
     'under certain conditions; see LICENSE file for details.\n\n'
     )
@@ -805,5 +805,81 @@ function initShutdown() {
 }
 
 process.on('SIGINT', initShutdown)
+
+//#endregion
+
+//#region cli
+
+const CLI_CMDS: CliCommand[] = [
+    {
+        command: 'help',
+        aliases: [ '?' ],
+        description: 'Lists all commands',
+        run: () => {
+            for(const cmd of CLI_CMDS) {
+                console.log(cmd.command + (cmd.description ? ` - ${cmd.description}` : ''))
+            }
+        },
+    },
+    {
+        command: 'show w',
+        description: 'Displays warranty information',
+        run: () => {
+            console.log(
+                '  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n' +
+                'APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT\n' +
+                'HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY\n' +
+                'OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,\n' +
+                'THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\n' +
+                'PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM\n' +
+                'IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF\n' +
+                'ALL NECESSARY SERVICING, REPAIR OR CORRECTION.\n\n' +
+
+                '  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING\n' +
+                'WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS\n' +
+                'THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY\n' +
+                'GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE\n' +
+                'USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF\n' +
+                'DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD\n' +
+                'PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),\n' +
+                'EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF\n' +
+                'SUCH DAMAGES.\n'
+            )
+        },
+    },
+    {
+        command: 'count connections',
+        aliases: [ 'count c' ],
+        description: 'Displays the number of active HTTP/S connections',
+        run: () => {
+            console.log(`Active connections: ${connectionTracker.getActiveConnectionCount()}`)
+        },
+    },
+    {
+        command: 'count sessions',
+        aliases: [ 'count s' ],
+        description: 'Displays the number of active game sessions',
+        run: () => {
+            console.log(`Active sessions: ${getActiveSessionCount()}`)
+        },
+    },
+]
+
+process.stdin.setEncoding('utf8')
+
+const readInput = (rawInput: unknown) => {
+    if(rawInput === null || typeof rawInput !== 'string') {
+        return
+    }
+    const input = rawInput.replace(/\r?\n/g, '') // remove newlines
+    for(const cmd of CLI_CMDS) {
+        if(input === cmd.command || (cmd.aliases && cmd.aliases.includes(input))) {
+            cmd.run()
+            break
+        }
+    }
+}
+
+process.stdin.on('data', readInput)
 
 //#endregion

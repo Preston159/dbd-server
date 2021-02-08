@@ -153,3 +153,10 @@ export function findSessionById(id: string): Session {
     }
     return null
 }
+
+/**
+ * @returns the number of active sessions
+ */
+export function getActiveSessionCount(): number {
+    return activeSessions.size
+}

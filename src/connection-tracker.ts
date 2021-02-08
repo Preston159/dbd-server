@@ -6,6 +6,20 @@ type Server = HttpServer | HttpsServer
 const connections: Socket[] = []
 
 /**
+ * @returns an array of all active tracked connections
+ */
+export function getActiveConnections(): readonly Socket[] {
+    return connections
+}
+
+/**
+ * @returns the number of active tracked connections
+ */
+export function getActiveConnectionCount(): number {
+    return connections.length
+}
+
+/**
  * Begins listening for and tracking connections on the given server(s)
  * @param servers the servers to track
  */
