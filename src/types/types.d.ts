@@ -133,3 +133,10 @@ export type GithubTagsResponse = {
     }
     node_id: string
 }[]
+
+export type CliCommand = {
+    command: string
+    aliases?: string[]
+    description?: string
+    run: () => void
+}

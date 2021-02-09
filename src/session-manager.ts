@@ -2,6 +2,7 @@ import type { Session, ClientIds } from './types/types'
 
 import { genFriendlyRandomString, mapToArray, genUUID } from './util.js'
 import * as StartingValues from './starting-values.js'
+import { log } from './logger.js'
 
 const activeSessions: Map<string, Session> = new Map<string, Session>()
 
@@ -153,3 +154,16 @@ export function findSessionById(id: string): Session {
     }
     return null
 }
+
+/**
+ * @returns the number of active sessions
+ */
+export function getActiveSessionCount(): number {
+    return activeSessions.size
+}
+
+// remove expired sessions every 10 minutes
+setInterval(() => {
+    removeExpiredSessions()
+    log('Removing expired sessions')
+}, 10 * 60 * 1000)
