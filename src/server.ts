@@ -8,6 +8,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import nunjucks from 'nunjucks'
+import rateLimit from 'express-rate-limit'
 
 import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray } from './util.js'
 import { getIp } from './ipaddr.js'
@@ -23,7 +24,7 @@ import respondEmpty, { addAutoResponses } from './respond-empty.js'
 import { getSteamIdFromToken } from './steam-manager.js'
 import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray, getActiveSessionCount } from './session-manager.js'
 import * as StartingValues from './starting-values.js'
-import { DEBUG_REQUIRE_HTTPS, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
+import { DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
 import { checkVersion } from './version-checker.js'
 
 //#region copyright notice
@@ -73,6 +74,18 @@ app.use((req, res, next) => {
     }
     next()
 })
+
+// set up rate limiting
+app.use(rateLimit({
+    windowMs: RATE_LIMIT_TIME * 1000,
+    max: RATE_LIMIT_COUNT,
+}))
+app.use("/api/v1/auth/login/", rateLimit({
+    windowMs: RATE_LIMIT_TIME * 1000,
+    max: LOGIN_LIMIT_COUNT,
+}))
+
+// set up POST and cookie parsing
 app.use(bodyParser.text({ type: '*/*' }))
 app.use(cookieParser())
 
