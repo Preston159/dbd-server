@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "dbd-server",
-  "version": "1.2.0-dev",
+  "version": "1.2.0",
   "description": "",
   "main": "server.js",
   "dependencies": {
