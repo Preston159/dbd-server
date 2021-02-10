@@ -1,0 +1,14 @@
+{
+    # the number of bonus bloodpoints given to each player by default
+    "bloodpoints": 500000000,
+    "survivorRank": 20,
+    "survivorPips": 0,
+    "killerRank": 20,
+    "killerPips": 0,
+    "playerLevel": {
+        "currentXp": 666,
+        "level": 66,
+        # devotion
+        "prestigeLevel": 6
+    }
+}

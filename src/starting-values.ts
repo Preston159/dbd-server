@@ -1,19 +1,24 @@
-import type { PlayerLevel, PlayerLevelInfo } from './types/types'
+import type { PlayerLevel, PlayerLevelInfo, StartingValuesJson } from './types/types'
+
+import * as fs from 'fs'
+import HJSON from 'hjson'
+import * as path from 'path'
 
 import { rankToPips, xpToPlayerLevel, playerLevelToTotalXp } from './util.js'
 
+const startingValues = HJSON.parse(fs.readFileSync(path.join('.', 'settings', 'starting-values.hjson')).toString()) as StartingValuesJson
+
 // these values affect players' starting values, e.g. their default save
-export const bloodpoints = 500_000_000 // note: these are bonus bloodpoints, and as such can be over 1,000,000
-const survivorRank = 20
-const survivorPips = 0
-const killerRank = 20
-const killerPips = 0
+export const bloodpoints = startingValues.bloodpoints // note: these are bonus bloodpoints, and as such can be over 1,000,000
+const survivorRank = startingValues.survivorRank
+const survivorPips = startingValues.survivorPips
+const killerRank = startingValues.killerRank
+const killerPips = startingValues.killerPips
 const playerLevel: PlayerLevelInfo = {
-    currentXp: 666,
-    level: 66,
-    prestigeLevel: 6,
+    currentXp: startingValues.playerLevel.currentXp,
+    level: startingValues.playerLevel.level,
+    prestigeLevel: startingValues.playerLevel.prestigeLevel,
 }
-// -- do not modify below this line -- //
 export const playerLevelObject: Readonly<PlayerLevel> = xpToPlayerLevel(playerLevelToTotalXp(playerLevel))
 export const pips: Readonly<{ survivor: number; killer: number }> = {
     survivor: rankToPips(survivorRank) + survivorPips,

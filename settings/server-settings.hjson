@@ -1,0 +1,21 @@
+{
+    # if true, the debug browser page will only be available over HTTPS
+    "debugRequireHttps": true,
+    # if true, all player saves will be written to files
+    # WARNING: this may create a lot of large files very quickly
+    "saveToFile": false,
+    # the length of each player session in seconds
+    # 86400 = 24 hours
+    "sessionLength": 86400,
+    # if true, only clients connecting with Steam will be allowed to connect
+    # i.e. nosteam won't work
+    "requireSteam": false,
+    # if true, only IP addresses found in whitelist.txt will be able to connect
+    "whitelistEnabled": false,
+    # the amount of time, in seconds, over which rate limiting is applied
+    "rateLimitTime": 10,
+    # the maximum number of requests per specified unit of time per IP
+    "rateLimitCount": 50,
+    # the maximum number of logins per specified unit of time per IP
+    "loginLimitCount": 1
+}
