@@ -1,0 +1,4 @@
+# IP whitelist
+# If the whitelist is enabled, IP addresses not in this file will receive a 404 error for every request
+# Lines starting with "#" are a comment
+127.0.0.1
