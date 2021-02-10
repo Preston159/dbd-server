@@ -15,14 +15,15 @@ export function checkVersion(): void {
         .then(json => {
             console.log(`Running DbD Dev Server v${verRunning}`)
             const verLatest = json[0].name
+            const downloadURL = `https://github.com/Preston159/dbd-server/releases/tag/${json[0].name}`
             if(verRunning.endsWith('-dev')) {
                 console.log("Stop! You're running a development version.")
                 console.log("If you don't know what you're doing, download the latest release here:")
-                console.log(json[0].zipball_url)
+                console.log(downloadURL)
             } else {
                 const comparison = compareVersions(verRunning, verLatest)
                 if(comparison < 0) {
-                    console.log(`An update is available! Download ${verLatest} from ${json[0].zipball_url}`)
+                    console.log(`An update is available! Download ${verLatest} from ${downloadURL}`)
                 }
             }
         })

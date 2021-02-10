@@ -876,6 +876,13 @@ const CLI_CMDS: CliCommand[] = [
             console.log(`Active sessions: ${getActiveSessionCount()}`)
         },
     },
+    {
+        command: 'stop',
+        description: 'Shuts down the server',
+        run: () => {
+            initShutdown()
+        },
+    },
 ]
 
 process.stdin.setEncoding('utf8')

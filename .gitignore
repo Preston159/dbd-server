@@ -8,7 +8,6 @@ saves/
 instructions.md
 ipaddr
 DEBUG
-whitelist.txt
 private/*.old
 !src/templates/debug/
 package-lock.json

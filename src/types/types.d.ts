@@ -140,3 +140,27 @@ export type CliCommand = {
     description?: string
     run: () => void
 }
+
+export type StartingValuesJson = {
+    bloodpoints: number
+    survivorRank: number
+    survivorPips: number
+    killerRank: number
+    killerPips: number
+    playerLevel: {
+        currentXp: number
+        level: number
+        prestigeLevel: number
+    }
+}
+
+export type ServerSettingsJson = {
+    debugRequireHttps: boolean
+    saveToFile: boolean
+    sessionLength: number
+    requireSteam: boolean
+    whitelistEnabled: boolean
+    rateLimitTime: number
+    rateLimitCount: number
+    loginLimitCount: number
+}
