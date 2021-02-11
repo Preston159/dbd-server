@@ -30,11 +30,11 @@ export function init(): void {
 }
 
 /**
- * Creates the 'logs' directory if it doesn't exist
+ * Creates the log directory if it doesn't exist
  */
 function createDirectory() {
-    if(!fs.existsSync(path.join('.', 'logs'))) {
-        fs.mkdirSync(path.join('.', 'logs'))
+    if(!fs.existsSync(path.join('.', opts.logDir))) {
+        fs.mkdirSync(path.join('.', opts.logDir))
     }
 }
 
