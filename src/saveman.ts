@@ -11,19 +11,33 @@ const iv = ''
 
 type SaveData = Record<string, unknown> & { characterData: { key: number }[]; playerUId: string }
 
-export function decryptSave(saveData: string): SaveData {
-    let save: any = saveData
-    save = save.substr(8) // is always DbdDAgAC
-    save = Buffer.from(save, 'base64')
-    save = decrypt(save)
-    for(let i = 0;i < save.length;i++) {
-        save[i]++
+export function decryptDbD(encryptedData: string): Buffer {
+    let data: any = encryptedData
+    data = data.substr(8) // is always DbdDAgAC
+    data = Buffer.from(data, 'base64')
+    data = decrypt(data)
+    for(let i = 0;i < data.length;i++) {
+        data[i]++
     }
-    save = save.slice(8) // is always 0x44 62 64 44 41 51 45 42
-    save = Buffer.from(save.toString(), 'base64')
-    save = save.slice(4) // is always 0xUU UU 00 00 (U is unknown; I'm not sure if this matters to the game)
-    save = zlib.inflateSync(save)
+    data = data.slice(8) // is always 0x44 62 64 44 41 51 45 42
+    data = Buffer.from(data.toString(), 'base64')
+    data = data.slice(4) // is always 0xUU UU 00 00 (U is unknown; I'm not sure if this matters to the game)
+    data = zlib.inflateSync(data)
+    return data
+}
+
+export function decryptSave(saveData: string): SaveData {
+    const save = decryptDbD(saveData)
     return JSON.parse(save.toString('utf16le'))
+}
+
+function decrypt(data: Buffer): Buffer {
+    const cipher = crypto.createDecipheriv('aes-256-ecb', key, iv)
+    cipher.setAutoPadding(false)
+    let hex = ''
+    hex = cipher.update(data).toString('hex')
+    hex += cipher.final().toString('hex')
+    return Buffer.from(hex, 'hex')
 }
 
 function appendBuffers(a: Buffer, b: Buffer): Buffer {
@@ -35,13 +49,4 @@ function appendBuffers(a: Buffer, b: Buffer): Buffer {
         out[a.length + i] = b[i]
     }
     return out
-}
-
-function decrypt(data: Buffer): Buffer {
-    const cipher = crypto.createDecipheriv('aes-256-ecb', key, iv)
-    cipher.setAutoPadding(false)
-    let hex = ''
-    hex = cipher.update(data).toString('hex')
-    hex += cipher.final().toString('hex')
-    return Buffer.from(hex, 'hex')
 }
