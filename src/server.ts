@@ -12,7 +12,7 @@ import rateLimit from 'express-rate-limit'
 
 import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray } from './util.js'
 import { getIp } from './ipaddr.js'
-import { decryptSave, encryptDbD } from './saveman.js'
+import { decryptDbD, decryptSave, encryptDbD } from './saveman.js'
 import idToName from './idtoname.js'
 import { log, logReq, init as initLogger, logListItem, logListItems, logBlankLine, logError } from './logger.js'
 import { isCdn } from './cdn.js'
@@ -885,6 +885,24 @@ const CLI_CMDS: CliCommand[] = [
         description: 'Shuts down the server',
         run: () => {
             initShutdown()
+        },
+    },
+    {
+        command: 'encrypt',
+        run: () => {
+            const ENCRYPTED_FILE = path.join('.', 'encryption', 'encrypted.txt')
+            const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
+            const plaintext = fs.readFileSync(DECRYPTED_FILE)
+            fs.writeFileSync(ENCRYPTED_FILE, encryptDbD(plaintext))
+        },
+    },
+    {
+        command: 'decrypt',
+        run: () => {
+            const ENCRYPTED_FILE = path.join('.', 'encryption', 'encrypted.txt')
+            const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
+            const encrypted = fs.readFileSync(ENCRYPTED_FILE)
+            fs.writeFileSync(DECRYPTED_FILE, decryptDbD(encrypted.toString()))
         },
     },
 ]
