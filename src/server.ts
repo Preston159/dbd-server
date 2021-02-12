@@ -133,7 +133,7 @@ const CONFIG_STRING = (() => {
     return JSON.stringify(arr)
 })()
 // load catalog.json file
-const CATALOG = fs.readFileSync(path.join('.', 'json', 'catalog.json'))
+const CATALOG = encryptDbD(fs.readFileSync(path.join('.', 'json', 'catalog.json')))
 // load contentSchedule.json
 const CONTENT_SCHEDULE = encryptDbD(fs.readFileSync(path.join('.', 'json', 'contentSchedule.json')))
 // load specialEventsContent.json

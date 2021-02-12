@@ -21,7 +21,7 @@ export function decryptDbD(encryptedData: string): Buffer {
     }
     data = data.slice(8) // is always 0x44 62 64 44 41 51 45 42
     data = Buffer.from(data.toString(), 'base64')
-    data = data.slice(4) // is always 0xUU UU 00 00 (U is unknown; I'm not sure if this matters to the game)
+    data = data.slice(4) // is always a 32-bit LE integer denoting the size of the plaintext
     data = zlib.inflateSync(data)
     return data
 }
@@ -31,10 +31,15 @@ export function decryptSave(saveData: string): SaveData {
     return JSON.parse(save.toString('utf16le'))
 }
 
-export function encryptDbD(plainData: Buffer | string): string {
+export function encryptDbD(plainData: Buffer): string {
     let data: any = plainData
+
+    const dataSize = plainData.length
+    const bufferA = Buffer.alloc(4)
+    bufferA.writeInt32LE(dataSize)
+
     data = zlib.deflateSync(data)
-    data = appendBuffers(Buffer.of(0xd8, 0x6c, 0x00, 0x00), data)
+    data = appendBuffers(bufferA, data)
     data = Buffer.from(data.toString('base64'))
     data = appendBuffers(Buffer.of(0x44, 0x62, 0x64, 0x44, 0x41, 0x51, 0x45, 0x42), data)
     for(let i = 0;i < data.length;i++) {
