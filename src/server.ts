@@ -12,7 +12,7 @@ import rateLimit from 'express-rate-limit'
 
 import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray } from './util.js'
 import { getIp } from './ipaddr.js'
-import { decryptSave } from './saveman.js'
+import { decryptSave, encryptDbD } from './saveman.js'
 import idToName from './idtoname.js'
 import { log, logReq, init as initLogger, logListItem, logListItems, logBlankLine, logError } from './logger.js'
 import { isCdn } from './cdn.js'
@@ -133,7 +133,11 @@ const CONFIG_STRING = (() => {
     return JSON.stringify(arr)
 })()
 // load catalog.json file
-const CATALOG = fs.readFileSync(path.join('.', 'catalog.json'))
+const CATALOG = fs.readFileSync(path.join('.', 'json', 'catalog.json'))
+// load contentSchedule.json
+const CONTENT_SCHEDULE = encryptDbD(fs.readFileSync(path.join('.', 'json', 'contentSchedule.json')))
+// load specialEventsContent.json
+const SPECIAL_EVENTS_CONTENT = encryptDbD(fs.readFileSync(path.join('.', 'json', 'specialEventsContent.json')))
 
 const WHITELIST_FILE = path.join('.', 'whitelist.txt')
 let WHITELIST: string[] = WHITELIST_ENABLED && fs.existsSync(WHITELIST_FILE) ?
@@ -523,7 +527,7 @@ app.get('/api/v1/inventories', (req, res) => {
 })
 
 app.get('/specialEvents/specialEventsContent.json', (req, res) => {
-    setBinary(res).status(204).end()
+    setBinary(res).send(SPECIAL_EVENTS_CONTENT)
 })
 
 app.get('/bonusPointEvents/bonusPointEventsContent.json', (req, res) => {
@@ -531,7 +535,7 @@ app.get('/bonusPointEvents/bonusPointEventsContent.json', (req, res) => {
 })
 
 app.get('/schedule/contentSchedule.json', (req, res) => {
-    setBinary(res).status(204).end()
+    setBinary(res).send(CONTENT_SCHEDULE)
 })
 
 app.get('/news/newsContent.json', (req, res) => {

@@ -1,0 +1,184 @@
+{
+    "schedule": [
+        {
+            "description": "Default Schedule", 
+            "maps_theme_weight": {
+                "Asylum": "1", 
+                "Boreal": "1", 
+                "England": "1", 
+                "Farm": "1", 
+                "Finland": "1", 
+                "GYM": "0", 
+                "Haiti": "1", 
+                "Hawkins": "1", 
+                "Hospital": "1", 
+                "Industrial": "1", 
+                "Junkyard": "1", 
+                "Suburbs": "1", 
+                "Swamp": "1"
+            }, 
+            "maps_weight": {
+                "Asy_Asylum": "10", 
+                "Asy_Chapel": "10", 
+                "Brl_MaHouse": "10", 
+                "Brl_Temple": "10", 
+                "Eng_Street_01": "5", 
+                "Eng_Street_02": "5", 
+                "Eng_Street_03": "5", 
+                "Eng_Street_04": "5", 
+                "Eng_Street_05": "5", 
+                "Fin_Hideout": "10", 
+                "Frm_Barn": "10", 
+                "Frm_Cornfield": "10", 
+                "Frm_Farmhouse": "10", 
+                "Frm_Silo": "10", 
+                "Frm_Slaughterhouse": "10", 
+                "Hos_Treatment": "10", 
+                "Hti_Manor": "10", 
+                "Ind_CoalTower": "10", 
+                "Ind_Forest": "10", 
+                "Ind_Foundry": "10", 
+                "Ind_Mine": "10", 
+                "Ind_Storehouse": "10", 
+                "Jnk_Garage": "10", 
+                "Jnk_GasStation": "10", 
+                "Jnk_Lodge": "10", 
+                "Jnk_Office": "10", 
+                "Jnk_Scrapyard": "10", 
+                "Kny_Cottage": "10", 
+                "Qat_Lab": "10", 
+                "Sub_Street": "10", 
+                "Swp_GrimPantry": "10", 
+                "Swp_PaleRose": "10"
+            }, 
+            "priority": "0"
+        }, 
+        {
+            "description": "Test", 
+            "end_date": "2019-03-04T03:59:59", 
+            "maps_weight": {
+                "Brl_Temple": "11.15"
+            }, 
+            "priority": "10", 
+            "start_date": "2019-03-03T04:00:00"
+        }, 
+        {
+            "description": "Playtest", 
+            "end_date": "2019-09-11T16:15:00", 
+            "maps_theme_weight": {
+                "Asylum": "0", 
+                "Boreal": "0", 
+                "England": "0", 
+                "Farm": "0", 
+                "Finland": "0", 
+                "GYM": "0", 
+                "Haiti": "0", 
+                "Hawkins": "1", 
+                "Hospital": "0", 
+                "Industrial": "0", 
+                "Junkyard": "0", 
+                "Suburbs": "0", 
+                "Swamp": "0"
+            }, 
+            "maps_weight": {
+                "Asy_Asylum": "0", 
+                "Asy_Chapel": "0", 
+                "Brl_MaHouse": "0", 
+                "Brl_Temple": "0", 
+                "Eng_Street_01": "0", 
+                "Eng_Street_02": "0", 
+                "Eng_Street_03": "0", 
+                "Eng_Street_04": "0", 
+                "Eng_Street_05": "0", 
+                "Fin_Hideout": "0", 
+                "Frm_Barn": "0", 
+                "Frm_Cornfield": "0", 
+                "Frm_Farmhouse": "0", 
+                "Frm_Silo": "0", 
+                "Frm_Slaughterhouse": "0", 
+                "Hos_Treatment": "0", 
+                "Hti_Manor": "0", 
+                "Ind_CoalTower": "0", 
+                "Ind_Forest": "0", 
+                "Ind_Foundry": "0", 
+                "Ind_Mine": "0", 
+                "Ind_Storehouse": "0", 
+                "Jnk_Garage": "0", 
+                "Jnk_GasStation": "0", 
+                "Jnk_Lodge": "0", 
+                "Jnk_Office": "0", 
+                "Jnk_Scrapyard": "0", 
+                "Kny_Cottage": "0", 
+                "Qat_Lab": "10", 
+                "Sub_Street": "0", 
+                "Swp_GrimPantry": "0", 
+                "Swp_PaleRose": "0"
+            }, 
+            "priority": "100", 
+            "start_date": "2019-09-11T14:45:00"
+        }, 
+        {
+            "description": "Test", 
+            "end_date": "2019-03-05T03:59:59", 
+            "maps_weight": {
+                "Brl_Temple": "9.7"
+            }, 
+            "priority": "11", 
+            "start_date": "2019-03-05T04:00:00"
+        }, 
+        {
+            "description": "Test", 
+            "end_date": "2019-03-06T03:59:59", 
+            "maps_weight": {
+                "Brl_Temple": "8.25"
+            }, 
+            "priority": "12", 
+            "start_date": "2019-03-06T04:00:00"
+        }, 
+        {
+            "description": "Test", 
+            "end_date": "2019-03-07T03:59:59", 
+            "maps_weight": {
+                "Brl_Temple": "6.8"
+            }, 
+            "priority": "13", 
+            "start_date": "2019-03-07T04:00:00"
+        }, 
+        {
+            "description": "Test", 
+            "end_date": "2019-03-08T03:59:59", 
+            "maps_weight": {
+                "Brl_Temple": "5.35"
+            }, 
+            "priority": "14", 
+            "start_date": "2019-03-08T04:00:00"
+        }, 
+        {
+            "description": "Test", 
+            "end_date": "2019-03-09T03:59:59", 
+            "maps_weight": {
+                "Brl_Temple": "3.9"
+            }, 
+            "priority": "15", 
+            "start_date": "2019-03-09T04:00:00"
+        }, 
+        {
+            "description": "Test", 
+            "end_date": "2019-03-10T03:59:59", 
+            "maps_weight": {
+                "Brl_Temple": "2.45"
+            }, 
+            "priority": "16", 
+            "start_date": "2019-03-10T04:00:00"
+        }, 
+        {
+            "description": "Test", 
+            "end_date": "2019-03-11T03:59:59", 
+            "maps_weight": {
+                "Brl_Temple": "1"
+            }, 
+            "priority": "17", 
+            "start_date": "2019-03-11T04:00:00"
+        }
+    ]
+}

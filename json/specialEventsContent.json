@@ -1,0 +1,52 @@
+{
+    "specialEvents": [
+        {
+            "eventId": "Halloween2017", 
+            "mainEndTime": "2017-11-02T18:00:00", 
+            "postEndTime": "2017-11-02T18:00:00", 
+            "startTime": "2017-10-19T18:00:00"
+        }, 
+        {
+            "eventId": "Winter2017", 
+            "mainEndTime": "2018-01-03T18:00:00", 
+            "postEndTime": "2018-01-03T18:00:00", 
+            "startTime": "2017-12-13T18:00:00"
+        }, 
+        {
+            "eventId": "Lunar", 
+            "mainEndTime": "2018-03-05T19:00:00", 
+            "postEndTime": "2018-03-05T19:00:00", 
+            "startTime": "2018-02-15T19:00:00"
+        }, 
+        {
+            "eventId": "Summer", 
+            "mainEndTime": "2018-08-21T15:00:00", 
+            "postEndTime": "2018-08-21T15:00:00", 
+            "startTime": "2018-08-07T15:00:00"
+        }, 
+        {
+            "eventId": "Halloween2018", 
+            "mainEndTime": "2018-11-02T18:00:00", 
+            "postEndTime": "2018-11-16T18:00:00", 
+            "startTime": "2018-10-19T18:00:00"
+        }, 
+        {
+            "eventId": "Winter2018", 
+            "mainEndTime": "2019-01-03T19:00:00", 
+            "postEndTime": "2019-01-03T19:00:00", 
+            "startTime": "2018-12-17T19:00:00"
+        }, 
+        {
+            "eventId": "Lunar2019", 
+            "mainEndTime": "2020-02-13T19:00:00", 
+            "postEndTime": "2020-02-27T19:00:00", 
+            "startTime": "2020-01-30T19:00:00"
+        }, 
+        {
+            "eventId": "Anniversary2019", 
+            "mainEndTime": "2019-07-02T18:00:00", 
+            "postEndTime": "2019-07-02T18:00:00", 
+            "startTime": "2019-06-18T18:00:00"
+        }
+    ]
+}

@@ -31,9 +31,35 @@ export function decryptSave(saveData: string): SaveData {
     return JSON.parse(save.toString('utf16le'))
 }
 
+export function encryptDbD(plainData: Buffer | string): string {
+    let data: any = plainData
+    data = zlib.deflateSync(data)
+    data = appendBuffers(Buffer.of(0xd8, 0x6c, 0x00, 0x00), data)
+    data = Buffer.from(data.toString('base64'))
+    data = appendBuffers(Buffer.of(0x44, 0x62, 0x64, 0x44, 0x41, 0x51, 0x45, 0x42), data)
+    for(let i = 0;i < data.length;i++) {
+        data[i]--
+    }
+    data = encrypt(data)
+    data = data.toString('base64')
+    data = 'DbdDAgAC' + data
+    return data
+}
+
 function decrypt(data: Buffer): Buffer {
     const cipher = crypto.createDecipheriv('aes-256-ecb', key, iv)
     cipher.setAutoPadding(false)
+    let hex = ''
+    hex = cipher.update(data).toString('hex')
+    hex += cipher.final().toString('hex')
+    const outBuffer = Buffer.from(hex, 'hex')
+    const paddingCount = outBuffer[outBuffer.length - 1]
+    return outBuffer.slice(0, outBuffer.length - paddingCount)
+}
+
+function encrypt(data: Buffer): Buffer {
+    const cipher = crypto.createCipheriv('aes-256-ecb', key, iv)
+    cipher.setAutoPadding(true)
     let hex = ''
     hex = cipher.update(data).toString('hex')
     hex += cipher.final().toString('hex')
