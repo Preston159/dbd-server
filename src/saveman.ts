@@ -13,15 +13,15 @@ type SaveData = Record<string, unknown> & { characterData: { key: number }[]; pl
 
 export function decryptSave(saveData: string): SaveData {
     let save: any = saveData
-    save = save.substr(8)
+    save = save.substr(8) // is always DbdDAgAC
     save = Buffer.from(save, 'base64')
     save = decrypt(save)
     for(let i = 0;i < save.length;i++) {
         save[i]++
     }
-    save = save.slice(8)
+    save = save.slice(8) // is always 0x44 62 64 44 41 51 45 42
     save = Buffer.from(save.toString(), 'base64')
-    save = save.slice(4)
+    save = save.slice(4) // is always 0xUU UU 00 00 (U is unknown; I'm not sure if this matters to the game)
     save = zlib.inflateSync(save)
     return JSON.parse(save.toString('utf16le'))
 }
