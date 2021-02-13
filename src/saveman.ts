@@ -57,18 +57,24 @@ function decrypt(data: Buffer): Buffer {
     let hex = ''
     hex = cipher.update(data).toString('hex')
     hex += cipher.final().toString('hex')
-    const outBuffer = Buffer.from(hex, 'hex')
-    const paddingCount = outBuffer[outBuffer.length - 1]
-    return outBuffer.slice(0, outBuffer.length - paddingCount)
+    let outBuffer = Buffer.from(hex, 'hex')
+    if(outBuffer[outBuffer.length - 1] === 0) {
+        while(outBuffer[outBuffer.length - 1] === 0) {
+            outBuffer = outBuffer.slice(0, outBuffer.length - 1)
+        }
+    } else {
+        const paddingCount = outBuffer[outBuffer.length - 1]
+        outBuffer = outBuffer.slice(0, outBuffer.length - paddingCount)
+    }
+    return outBuffer
 }
 
 function encrypt(data: Buffer): Buffer {
     const cipher = crypto.createCipheriv('aes-256-ecb', key, iv)
-    cipher.setAutoPadding(true)
-    let hex = ''
-    hex = cipher.update(data).toString('hex')
-    hex += cipher.final().toString('hex')
-    return Buffer.from(hex, 'hex')
+    cipher.setAutoPadding(false)
+    const paddingByteCount = (32 - (data.length % 32)) || 32
+    data = appendBuffers(data, Buffer.alloc(paddingByteCount, 0))
+    return appendBuffers(cipher.update(data), cipher.final())
 }
 
 function appendBuffers(a: Buffer, b: Buffer): Buffer {
