@@ -10,7 +10,7 @@ import cookieParser from 'cookie-parser'
 import nunjucks from 'nunjucks'
 import rateLimit from 'express-rate-limit'
 
-import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray } from './util.js'
+import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff } from './util.js'
 import { getIp } from './ipaddr.js'
 import { decryptDbD, decryptSave, encryptDbD } from './saveman.js'
 import idToName from './idtoname.js'
@@ -904,6 +904,22 @@ const CLI_CMDS: CliCommand[] = [
             const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
             const encrypted = fs.readFileSync(ENCRYPTED_FILE)
             fs.writeFileSync(DECRYPTED_FILE, decryptDbD(encrypted.toString()))
+        },
+    },
+    {
+        command: 'testencryption',
+        run: () => {
+            const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
+            const EXPECTED_FILE = path.join('.', 'encryption', 'expected.txt')
+            const plaintext = fs.readFileSync(DECRYPTED_FILE)
+            const expected = fs.readFileSync(EXPECTED_FILE).toString()
+            const encrypted = encryptDbD(plaintext)
+            const diff = stringDiff(expected, encrypted)
+            if(diff === -1) {
+                console.log('Files are the same')
+            } else {
+                console.log(`Files differ at byte ${diff}`)
+            }
         },
     },
 ]

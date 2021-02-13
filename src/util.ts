@@ -414,4 +414,24 @@ export function mapToArray<V>(map: Map<any, V>): readonly V[] {
     return out
 }
 
+/**
+ * Compares two strings and finds where they differ
+ * @param a string A
+ * @param b string B
+ * @returns the index of the first difference, or -1 if the strings are the same
+ */
+export function stringDiff(a: string, b: string): number {
+    if(a === b) {
+        return -1
+    }
+    const max = Math.max(a.length, b.length)
+    let i = 0
+    for(;i < max;i++) {
+        if(a.charAt(i) !== b.charAt(i)) {
+            break
+        }
+    }
+    return i
+}
+
 //#endregion
