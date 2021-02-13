@@ -834,6 +834,7 @@ const CLI_CMDS: CliCommand[] = [
         aliases: [ '?' ],
         description: 'Lists all commands',
         run: () => {
+            console.log('\nCommands:')
             for(const cmd of CLI_CMDS) {
                 console.log(cmd.command + (cmd.description ? ` - ${cmd.description}` : ''))
             }
