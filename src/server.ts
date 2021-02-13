@@ -10,7 +10,7 @@ import cookieParser from 'cookie-parser'
 import nunjucks from 'nunjucks'
 import rateLimit from 'express-rate-limit'
 
-import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff } from './util.js'
+import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff, checkCmdMatch } from './util.js'
 import { getIp } from './ipaddr.js'
 import { decryptDbD, decryptSave, encryptDbD } from './saveman.js'
 import idToName from './idtoname.js'
@@ -833,6 +833,7 @@ const CLI_CMDS: CliCommand[] = [
         command: 'help',
         aliases: [ '?' ],
         description: 'Lists all commands',
+        args: false,
         run: () => {
             console.log('\nCommands:')
             for(const cmd of CLI_CMDS) {
@@ -843,6 +844,7 @@ const CLI_CMDS: CliCommand[] = [
     {
         command: 'show w',
         description: 'Displays warranty information',
+        args: false,
         run: () => {
             console.log(
                 '  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n' +
@@ -870,6 +872,7 @@ const CLI_CMDS: CliCommand[] = [
         command: 'count connections',
         aliases: [ 'count c' ],
         description: 'Displays the number of active HTTP/S connections',
+        args: false,
         run: () => {
             console.log(`Active connections: ${connectionTracker.getActiveConnectionCount()}`)
         },
@@ -878,6 +881,7 @@ const CLI_CMDS: CliCommand[] = [
         command: 'count sessions',
         aliases: [ 'count s' ],
         description: 'Displays the number of active game sessions',
+        args: false,
         run: () => {
             console.log(`Active sessions: ${getActiveSessionCount()}`)
         },
@@ -885,6 +889,7 @@ const CLI_CMDS: CliCommand[] = [
     {
         command: 'stop',
         description: 'Shuts down the server',
+        args: false,
         run: () => {
             initShutdown()
         },
@@ -896,6 +901,7 @@ if(DEBUG) {
     const DEBUG_CMDS: CliCommand[] = [
         {
             command: 'encrypt',
+            args: false,
             run: () => {
                 const ENCRYPTED_FILE = path.join('.', 'encryption', 'encrypted.txt')
                 const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
@@ -905,6 +911,7 @@ if(DEBUG) {
         },
         {
             command: 'decrypt',
+            args: false,
             run: () => {
                 const ENCRYPTED_FILE = path.join('.', 'encryption', 'encrypted.txt')
                 const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
@@ -914,6 +921,7 @@ if(DEBUG) {
         },
         {
             command: 'testencryption',
+            args: false,
             run: () => {
                 const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
                 const EXPECTED_FILE = path.join('.', 'encryption', 'expected.txt')
@@ -926,6 +934,13 @@ if(DEBUG) {
                 } else {
                     console.log(`Files differ at byte ${diff}`)
                 }
+            },
+        },
+        {
+            command: 'eval',
+            args: true,
+            run: (args) => {
+                eval(args.join(' ')) // eslint-disable-line no-eval
             },
         },
     ]
@@ -942,8 +957,18 @@ const readInput = (rawInput: unknown) => {
     }
     const input = rawInput.replace(/\r?\n/g, '') // remove newlines
     for(const cmd of CLI_CMDS) {
-        if(input === cmd.command || (cmd.aliases && cmd.aliases.includes(input))) {
-            cmd.run()
+        const match = checkCmdMatch(cmd, input)
+        if(match[0]) {
+            if(!cmd.args) {
+                cmd.run()
+            } else {
+                const argsRaw = input.substr(match[1].length)
+                if(argsRaw.length === 0) {
+                    cmd.run([])
+                } else {
+                    cmd.run(argsRaw.substr(1).split(' '))
+                }
+            }
             break
         }
     }

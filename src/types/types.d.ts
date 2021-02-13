@@ -138,7 +138,8 @@ export type CliCommand = {
     command: string
     aliases?: string[]
     description?: string
-    run: () => void
+    args: boolean
+    run: (args?: string[]) => void
 }
 
 export type StartingValuesJson = {
