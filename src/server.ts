@@ -69,10 +69,6 @@ app.use((req, res, next) => {
         type = 'CDN'
     }
     logReq(req, type)
-    if(type === 'CDN') {
-        res.status(204).end()
-        return
-    }
     next()
 })
 
