@@ -878,6 +878,7 @@ const CLI_CMDS: CliCommand[] = [
     },
     {
         command: 'stop',
+		aliases: [ 'exit', 'quit' ],
         description: 'Shuts down the server',
         run: () => {
             initShutdown()
