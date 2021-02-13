@@ -26,6 +26,7 @@ import { isSessionActive, getSession, createSession, deleteSession, findSessionB
 import * as StartingValues from './starting-values.js'
 import { DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
 import { checkVersion } from './version-checker.js'
+import { loadAndEncryptJson } from './jsonman.js'
 
 //#region copyright notice
 console.log(
@@ -133,11 +134,11 @@ const CONFIG_STRING = (() => {
     return JSON.stringify(arr)
 })()
 // load catalog.json file
-const CATALOG = encryptDbD(fs.readFileSync(path.join('.', 'json', 'catalog.json')))
+const CATALOG = loadAndEncryptJson(path.join('.', 'json', 'catalog.json'))
 // load contentSchedule.json
-const CONTENT_SCHEDULE = encryptDbD(fs.readFileSync(path.join('.', 'json', 'contentSchedule.json')))
+const CONTENT_SCHEDULE = loadAndEncryptJson(path.join('.', 'json', 'contentSchedule.json'))
 // load specialEventsContent.json
-const SPECIAL_EVENTS_CONTENT = encryptDbD(fs.readFileSync(path.join('.', 'json', 'specialEventsContent.json')))
+const SPECIAL_EVENTS_CONTENT = loadAndEncryptJson(path.join('.', 'json', 'specialEventsContent.json'))
 
 const WHITELIST_FILE = path.join('.', 'whitelist.txt')
 let WHITELIST: string[] = WHITELIST_ENABLED && fs.existsSync(WHITELIST_FILE) ?
