@@ -135,6 +135,8 @@ const CATALOG = loadAndEncryptJson(path.join('.', 'json', 'catalog.json'))
 const CONTENT_SCHEDULE = loadAndEncryptJson(path.join('.', 'json', 'contentSchedule.json'))
 // load specialEventsContent.json
 const SPECIAL_EVENTS_CONTENT = loadAndEncryptJson(path.join('.', 'json', 'specialEventsContent.json'))
+// load newsContent.json
+const NEWS_CONTENT = loadAndEncryptJson(path.join('.', 'json', 'newsContent.json'))
 
 const WHITELIST_FILE = path.join('.', 'whitelist.txt')
 let WHITELIST: string[] = WHITELIST_ENABLED && fs.existsSync(WHITELIST_FILE) ?
@@ -536,7 +538,7 @@ app.get('/schedule/contentSchedule.json', (req, res) => {
 })
 
 app.get('/news/newsContent.json', (req, res) => {
-    setBinary(res).status(204).end()
+    setBinary(res).send(NEWS_CONTENT)
 })
 
 app.get('/api/v1/players/me/states/FullProfile/binary', (req, res) => {
