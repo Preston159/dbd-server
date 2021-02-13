@@ -888,41 +888,50 @@ const CLI_CMDS: CliCommand[] = [
             initShutdown()
         },
     },
-    {
-        command: 'encrypt',
-        run: () => {
-            const ENCRYPTED_FILE = path.join('.', 'encryption', 'encrypted.txt')
-            const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
-            const plaintext = fs.readFileSync(DECRYPTED_FILE)
-            fs.writeFileSync(ENCRYPTED_FILE, encryptDbD(plaintext))
-        },
-    },
-    {
-        command: 'decrypt',
-        run: () => {
-            const ENCRYPTED_FILE = path.join('.', 'encryption', 'encrypted.txt')
-            const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
-            const encrypted = fs.readFileSync(ENCRYPTED_FILE)
-            fs.writeFileSync(DECRYPTED_FILE, decryptDbD(encrypted.toString()))
-        },
-    },
-    {
-        command: 'testencryption',
-        run: () => {
-            const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
-            const EXPECTED_FILE = path.join('.', 'encryption', 'expected.txt')
-            const plaintext = fs.readFileSync(DECRYPTED_FILE)
-            const expected = fs.readFileSync(EXPECTED_FILE).toString()
-            const encrypted = encryptDbD(plaintext)
-            const diff = stringDiff(expected, encrypted)
-            if(diff === -1) {
-                console.log('Files are the same')
-            } else {
-                console.log(`Files differ at byte ${diff}`)
-            }
-        },
-    },
 ]
+
+// add debug commands if in debug mode
+if(DEBUG) {
+    const DEBUG_CMDS: CliCommand[] = [
+        {
+            command: 'encrypt',
+            run: () => {
+                const ENCRYPTED_FILE = path.join('.', 'encryption', 'encrypted.txt')
+                const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
+                const plaintext = fs.readFileSync(DECRYPTED_FILE)
+                fs.writeFileSync(ENCRYPTED_FILE, encryptDbD(plaintext))
+            },
+        },
+        {
+            command: 'decrypt',
+            run: () => {
+                const ENCRYPTED_FILE = path.join('.', 'encryption', 'encrypted.txt')
+                const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
+                const encrypted = fs.readFileSync(ENCRYPTED_FILE)
+                fs.writeFileSync(DECRYPTED_FILE, decryptDbD(encrypted.toString()))
+            },
+        },
+        {
+            command: 'testencryption',
+            run: () => {
+                const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
+                const EXPECTED_FILE = path.join('.', 'encryption', 'expected.txt')
+                const plaintext = fs.readFileSync(DECRYPTED_FILE)
+                const expected = fs.readFileSync(EXPECTED_FILE).toString()
+                const encrypted = encryptDbD(plaintext)
+                const diff = stringDiff(expected, encrypted)
+                if(diff === -1) {
+                    console.log('Files are the same')
+                } else {
+                    console.log(`Files differ at byte ${diff}`)
+                }
+            },
+        },
+    ]
+    for(const cmd of DEBUG_CMDS) {
+        CLI_CMDS.push(cmd)
+    }
+}
 
 process.stdin.setEncoding('utf8')
 
