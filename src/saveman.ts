@@ -11,19 +11,70 @@ const iv = ''
 
 type SaveData = Record<string, unknown> & { characterData: { key: number }[]; playerUId: string }
 
-export function decryptSave(saveData: string): SaveData {
-    let save: any = saveData
-    save = save.substr(8)
-    save = Buffer.from(save, 'base64')
-    save = decrypt(save)
-    for(let i = 0;i < save.length;i++) {
-        save[i]++
+export function decryptDbD(encryptedData: string): Buffer {
+    let data: any = encryptedData
+    data = data.substr(8) // is always DbdDAgAC
+    data = Buffer.from(data, 'base64')
+    data = decrypt(data)
+    for(let i = 0;i < data.length;i++) {
+        data[i]++
     }
-    save = save.slice(8)
-    save = Buffer.from(save.toString(), 'base64')
-    save = save.slice(4)
-    save = zlib.inflateSync(save)
+    data = data.slice(8) // is always 0x44 62 64 44 41 51 45 42
+    data = Buffer.from(data.toString(), 'base64')
+    data = data.slice(4) // is always a 32-bit LE integer denoting the size of the plaintext
+    data = zlib.inflateSync(data)
+    return data
+}
+
+export function decryptSave(saveData: string): SaveData {
+    const save = decryptDbD(saveData)
     return JSON.parse(save.toString('utf16le'))
+}
+
+export function encryptDbD(plainData: Buffer): string {
+    let data: any = plainData
+
+    const dataSize = plainData.length
+    const bufferA = Buffer.alloc(4)
+    bufferA.writeInt32LE(dataSize)
+
+    data = zlib.deflateSync(data)
+    data = appendBuffers(bufferA, data)
+    data = Buffer.from(data.toString('base64'))
+    data = appendBuffers(Buffer.of(0x44, 0x62, 0x64, 0x44, 0x41, 0x51, 0x45, 0x42), data)
+    for(let i = 0;i < data.length;i++) {
+        data[i]--
+    }
+    data = encrypt(data)
+    data = data.toString('base64')
+    data = 'DbdDAgAC' + data
+    return data
+}
+
+function decrypt(data: Buffer): Buffer {
+    const cipher = crypto.createDecipheriv('aes-256-ecb', key, iv)
+    cipher.setAutoPadding(false)
+    let hex = ''
+    hex = cipher.update(data).toString('hex')
+    hex += cipher.final().toString('hex')
+    let outBuffer = Buffer.from(hex, 'hex')
+    if(outBuffer[outBuffer.length - 1] === 0) {
+        while(outBuffer[outBuffer.length - 1] === 0) {
+            outBuffer = outBuffer.slice(0, outBuffer.length - 1)
+        }
+    } else {
+        const paddingCount = outBuffer[outBuffer.length - 1]
+        outBuffer = outBuffer.slice(0, outBuffer.length - paddingCount)
+    }
+    return outBuffer
+}
+
+function encrypt(data: Buffer): Buffer {
+    const cipher = crypto.createCipheriv('aes-256-ecb', key, iv)
+    cipher.setAutoPadding(false)
+    const paddingByteCount = (32 - (data.length % 32)) || 32
+    data = appendBuffers(data, Buffer.alloc(paddingByteCount, 0))
+    return appendBuffers(cipher.update(data), cipher.final())
 }
 
 function appendBuffers(a: Buffer, b: Buffer): Buffer {
@@ -35,13 +86,4 @@ function appendBuffers(a: Buffer, b: Buffer): Buffer {
         out[a.length + i] = b[i]
     }
     return out
-}
-
-function decrypt(data: Buffer): Buffer {
-    const cipher = crypto.createDecipheriv('aes-256-ecb', key, iv)
-    cipher.setAutoPadding(false)
-    let hex = ''
-    hex = cipher.update(data).toString('hex')
-    hex += cipher.final().toString('hex')
-    return Buffer.from(hex, 'hex')
 }

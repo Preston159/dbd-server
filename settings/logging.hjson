@@ -1,0 +1,10 @@
+{
+    // if true, logs will be output to console
+    "console": true,
+    // if true, logs will be written to file
+    "file": true,
+    // the directory in which log files are saved
+    "logDir": "logs",
+    // the name of the server log file
+    "fileName": "server.log"
+}
