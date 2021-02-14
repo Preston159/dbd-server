@@ -1,4 +1,4 @@
-import type { Session, ConfigValue, RequestMethod, RequestType, CliCommand } from './types/types'
+import type { Session, ConfigValue, RequestMethod, RequestType, CliCommand, GameEvent } from './types/types'
 import type { Response, Request } from 'express'
 
 import * as path from 'path'
@@ -763,6 +763,54 @@ app.post('/api/v1/extensions/store/getAvailableBundles', (req, res) => {
 
 app.get('/banners/featuredPageContent.json', (req, res) => {
     setJson(res).status(204).end()
+})
+
+app.post('/api/v1/extensions/specialEvents/getEventProgression', (req, res) => {
+    try {
+        const data = JSON.parse(req.body).data as { eventId: GameEvent }
+        if(data.eventId === 'Halloween2018') {
+            sendJson(res, {
+                eventId: 'Halloween2018',
+                version: 1,
+                objectives: [
+                    {
+                        id: "HalloweenKillerVial",
+                        repetitions: 0,
+                        maxRepetitions: 60,
+                    }, {
+                        id: "HalloweenSurvivorVial",
+                        repetitions: 0,
+                        maxRepetitions: 60,
+                    },
+                ],
+            })
+        } else {
+            res.status(204).end()
+        }
+    } catch {
+        res.status(500).end()
+    }
+})
+
+app.post('/api/v1/extensions/objectives/getObjectiveProgression', (req, res) => {
+    try {
+        const data = JSON.parse(req.body).data as { objectiveId: string }
+        if(data.objectiveId === 'LunarLantern') {
+            sendJson(res, {
+                currentProgress: 0,
+                currentProgressUpperBound: 100,
+                maxTier: 9,
+                maxTotalProgression: 4500,
+                objectiveVersion: 2,
+                tier: 1,
+                totalProgress: 0,
+            })
+        } else {
+            res.status(204).end()
+        }
+    } catch {
+        res.status(500).end()
+    }
 })
 
 //#endregion
