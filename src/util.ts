@@ -414,6 +414,8 @@ export function mapToArray<V>(map: Map<any, V>): readonly V[] {
     return out
 }
 
+//#endregion
+
 /**
  * Compares two strings and finds where they differ
  * @param a string A
@@ -460,4 +462,9 @@ export function checkCmdMatch(cmd: CliCommand, input: string): [ boolean, string
     return [ false, null ]
 }
 
-//#endregion
+export function getGameDateString(date: Date): string {
+    const year = date.getUTCFullYear().toString()
+    const month = padNumber(date.getUTCMonth() + 1, 2)
+    const day = padNumber(date.getUTCDate(), 2)
+    return `${year}-${month}-${day}T00:00:00`
+}

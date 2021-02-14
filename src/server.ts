@@ -27,6 +27,7 @@ import * as StartingValues from './starting-values.js'
 import { DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
 import { checkVersion } from './version-checker.js'
 import { loadAndEncryptJson } from './jsonman.js'
+import { getGameEventData } from './events.js'
 
 //#region copyright notice
 console.log(
@@ -134,7 +135,7 @@ const CATALOG = loadAndEncryptJson(path.join('.', 'json', 'catalog.json'))
 // load contentSchedule.json
 const CONTENT_SCHEDULE = loadAndEncryptJson(path.join('.', 'json', 'contentSchedule.json'))
 // load specialEventsContent.json
-const SPECIAL_EVENTS_CONTENT = loadAndEncryptJson(path.join('.', 'json', 'specialEventsContent.json'))
+const SPECIAL_EVENTS_CONTENT = getGameEventData()
 // load newsContent.json
 const NEWS_CONTENT = loadAndEncryptJson(path.join('.', 'json', 'newsContent.json'))
 
