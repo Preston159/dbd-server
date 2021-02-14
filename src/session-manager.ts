@@ -133,6 +133,7 @@ export function clearFakeSessions(): void {
  * @param ignoreFake an optional paramater denoting whether to leave fake sessions active despite being always expired. Defaults to false.
  */
 export function removeExpiredSessions(ignoreFake = false): void {
+    console.log('Removing expired sessions')
     const now = Math.floor(Date.now() / 1000)
     const expiredSessions = getSessionsAsArray().filter(session => session.expires < now && (!ignoreFake || !session.isFake)).map(session => session.bhvrSession)
     for(const bhvrSession of expiredSessions) {
@@ -161,9 +162,3 @@ export function findSessionById(id: string): Session {
 export function getActiveSessionCount(): number {
     return activeSessions.size
 }
-
-// remove expired sessions every 10 minutes
-setInterval(() => {
-    removeExpiredSessions()
-    log('Removing expired sessions')
-}, 10 * 60 * 1000)

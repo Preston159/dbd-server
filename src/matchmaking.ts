@@ -1,8 +1,9 @@
-import type { Lobby, QueueData, QueuedPlayer, Session, Side } from './types/types'
+import type { KilledLobby, Lobby, QueueData, QueuedPlayer, Session, Side } from './types/types'
 import { genMatchUUID } from './util.js'
 
 
 const openLobbies: Lobby[] = []
+const killedLobbies: KilledLobby[] = []
 const queuedPlayers: QueuedPlayer[] = []
 
 export function queuePlayer(queueData: QueueData, session: Session): void {
@@ -82,6 +83,15 @@ export function getLobbyById(id: string): [ Lobby, number ] {
     return [ null, -1 ]
 }
 
+export function getKilledLobbyById(id: string): KilledLobby {
+    for(const killedLobby of killedLobbies) {
+        if(killedLobby.id === id) {
+            return killedLobby
+        }
+    }
+    return null
+}
+
 export function registerMatch(matchId: string, sessionSettings: string): Record<string, unknown> {
     const [ lobby ] = getLobbyById(matchId)
     if(lobby === null) {
@@ -97,7 +107,9 @@ export function deleteMatch(matchId: string): void {
     if(lobby === null) {
         return
     }
-    openLobbies.splice(index, 1)
+    const killedLobby = openLobbies.splice(index, 1)[0] as KilledLobby
+    killedLobby.killedTime = Date.now()
+    killedLobbies.push(killedLobby)
 }
 
 export function isOwner(matchId: string, bhvrSession: string): boolean {
@@ -105,8 +117,23 @@ export function isOwner(matchId: string, bhvrSession: string): boolean {
     return lobby && lobby.host.bhvrSession === bhvrSession
 }
 
+export function deleteOldMatches(): void {
+    console.log('Deleting old matches')
+    for(let i = killedLobbies.length - 1;i >= 0;i--) {
+        if(killedLobbies[i].killedTime < Date.now() - 5 * 60 * 1000) {
+            killedLobbies.splice(i, 1)
+        }
+    }
+}
+
 export function createMatchResponse(matchId: string, killed = false): Record<string, unknown> {
-    const [ lobby ] = getLobbyById(matchId)
+    let [ lobby ] = getLobbyById(matchId)
+    if(lobby === null) {
+        lobby = getKilledLobbyById(matchId)
+    }
+    if(lobby === null) {
+        return {}
+    }
     return {
         category: 'oman-100372-dev:None:Windows:::1:4:0:G:2',
         churn: 0,

@@ -22,13 +22,13 @@ import debugResponse, { setResponse, unsetResponse } from './debug-response.js'
 import * as connectionTracker from './connection-tracker.js'
 import respondEmpty, { addAutoResponses } from './respond-empty.js'
 import { getSteamIdFromToken } from './steam-manager.js'
-import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray, getActiveSessionCount } from './session-manager.js'
+import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray, getActiveSessionCount, removeExpiredSessions } from './session-manager.js'
 import * as StartingValues from './starting-values.js'
 import { DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
 import { checkVersion } from './version-checker.js'
 import { loadAndEncryptJson } from './jsonman.js'
 import { getGameEventData } from './events.js'
-import { createMatchResponse, deleteMatch, getLobbyById, getQueueStatus, isOwner, queuePlayer, registerMatch, removePlayerFromQueue } from './matchmaking.js'
+import { createMatchResponse, deleteMatch, deleteOldMatches, getLobbyById, getQueueStatus, isOwner, queuePlayer, registerMatch, removePlayerFromQueue } from './matchmaking.js'
 
 //#region copyright notice
 console.log(
@@ -1075,5 +1075,14 @@ const readInput = (rawInput: unknown) => {
 }
 
 process.stdin.on('data', readInput)
+
+//#endregion
+
+//#region regular cleanup
+
+setInterval(() => {
+    removeExpiredSessions()
+    deleteOldMatches()
+}, 10 * 60 * 1000)
 
 //#endregion

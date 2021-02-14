@@ -55,6 +55,8 @@ export type Lobby = {
     reason?: string
 }
 
+export type KilledLobby = Lobby & { killedTime: number }
+
 export type Match = {
     players: QueuedPlayer[]
     alivePlayers: QueuedPlayer[]
