@@ -129,6 +129,20 @@ export function logBlankLine(): void {
 }
 
 /**
+ * Logs a failed request
+ * @param req the request
+ */
+export function logFailedRequest(req: Request<any>): void {
+    if(opts.failedRequests) {
+        log('A request has been received which the server did not explicitly respond to.')
+        log(`  ${req.ip} ${req.method} ${req.originalUrl}`)
+        if(req.body && (typeof req.body !== 'object' || Object.keys(req.body).length > 0)) {
+            log(req.body)
+        }
+    }
+}
+
+/**
  * Logs the last N bytes of a buffer
  * @param buffer    the buffer to log
  * @param n         the number of bytes
