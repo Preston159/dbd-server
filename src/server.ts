@@ -753,6 +753,10 @@ app.post('/api/v1/extensions/ownedProducts/reportOwnedProducts', (req, res) => {
     setJson(res).send('Ok')
 })
 
+app.post('/api/v1/extensions/rewards/grantCurrency', (req, res) => {
+    setJson(res).status(204).end()
+})
+
 app.post('/api/v1/extensions/store/steamGetPendingTransactions', (req, res) => {
     setJson(res).status(204).end()
 })
@@ -887,7 +891,7 @@ const CLI_CMDS: CliCommand[] = [
     },
     {
         command: 'stop',
-		aliases: [ 'exit', 'quit' ],
+	    aliases: [ 'exit', 'quit' ],
         description: 'Shuts down the server',
         args: false,
         run: () => {
