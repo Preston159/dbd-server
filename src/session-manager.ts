@@ -2,7 +2,6 @@ import type { Session, ClientIds } from './types/types'
 
 import { genFriendlyRandomString, mapToArray, genUUID } from './util.js'
 import * as StartingValues from './starting-values.js'
-import { log } from './logger.js'
 
 const activeSessions: Map<string, Session> = new Map<string, Session>()
 
