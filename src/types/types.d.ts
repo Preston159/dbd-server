@@ -138,7 +138,8 @@ export type CliCommand = {
     command: string
     aliases?: string[]
     description?: string
-    run: () => void
+    args: boolean
+    run: (args?: string[]) => void
 }
 
 export type StartingValuesJson = {
@@ -163,4 +164,26 @@ export type ServerSettingsJson = {
     rateLimitTime: number
     rateLimitCount: number
     loginLimitCount: number
+}
+
+export type EventsJson = {
+    Halloween2017: boolean
+    Winter2017: boolean
+    Lunar: boolean
+    Summer: boolean
+    Halloween2018: boolean
+    Winter2018: boolean
+    Lunar2019: boolean
+    Anniversary2019: boolean
+}
+
+export type GameEvent = 'Halloween2017' | 'Winter2017' | 'Lunar' | 'Summer' | 'Halloween2018' | 'Winter2018' | 'Lunar2019' | 'Anniversary2019' | 'None'
+
+export type SpecialEventsContent = {
+    specialEvents: {
+        eventId: GameEvent
+        mainEndTime: string
+        postEndTime: string
+        startTime: string
+    }[]
 }

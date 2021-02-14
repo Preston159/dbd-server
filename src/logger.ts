@@ -3,6 +3,7 @@ import type { LoggerOptions, FileParts, RequestType } from './types/types'
 import type { Request } from 'express'
 import * as fs from 'fs'
 import type { WriteStream } from 'fs'
+import HJSON from 'hjson'
 import * as path from 'path'
 
 import { getDateString, API_PREFIX, formatString, padHexByte, padString, removeToken } from './util.js'
@@ -10,12 +11,7 @@ import { getDateString, API_PREFIX, formatString, padHexByte, padString, removeT
 const FNAME_REGEX = /^(?<name>[A-Za-z0-9\-_\.]+)\.(?<ext>[A-Za-z]{1,4})$/
 const DIR_REGEX = /^[A-Za-z0-9\-_]+$/
 
-const opts: LoggerOptions = {
-    console: true,
-    file: true,
-    logDir: 'logs',
-    fileName: 'server.log',
-}
+const opts = HJSON.parse(fs.readFileSync(path.join('.', 'settings', 'logging.hjson')).toString()) as LoggerOptions
 
 let writeStream: WriteStream = null
 let filePath: string = path.join('.', opts.logDir, opts.fileName)
@@ -34,11 +30,11 @@ export function init(): void {
 }
 
 /**
- * Creates the 'logs' directory if it doesn't exist
+ * Creates the log directory if it doesn't exist
  */
 function createDirectory() {
-    if(!fs.existsSync(path.join('.', 'logs'))) {
-        fs.mkdirSync(path.join('.', 'logs'))
+    if(!fs.existsSync(path.join('.', opts.logDir))) {
+        fs.mkdirSync(path.join('.', opts.logDir))
     }
 }
 

@@ -1,7 +1,7 @@
 import * as crypto from 'crypto'
 import { Response } from 'express'
 
-import type { StringPart, PlayerLevel, PlayerLevelInfo } from './types/types'
+import type { StringPart, PlayerLevel, PlayerLevelInfo, CliCommand } from './types/types'
 
 export const LOGIN_TOKEN_REGEX = /[?&]token=[0-9a-f]+/i
 export const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
@@ -415,3 +415,56 @@ export function mapToArray<V>(map: Map<any, V>): readonly V[] {
 }
 
 //#endregion
+
+/**
+ * Compares two strings and finds where they differ
+ * @param a string A
+ * @param b string B
+ * @returns the index of the first difference, or -1 if the strings are the same
+ */
+export function stringDiff(a: string, b: string): number {
+    if(a === b) {
+        return -1
+    }
+    const max = Math.max(a.length, b.length)
+    let i = 0
+    for(;i < max;i++) {
+        if(a.charAt(i) !== b.charAt(i)) {
+            break
+        }
+    }
+    return i
+}
+
+/**
+ * Checks whether the provided input matches the provided command
+ * @param cmd   the command
+ * @param input the input
+ * @returns a tuple [ boolean, string ] where the boolean is whether there was a match, and the string is the matched text
+ */
+export function checkCmdMatch(cmd: CliCommand, input: string): [ boolean, string ] {
+    if(!cmd.args && input === cmd.command) {
+        return [ true, cmd.command ]
+    }
+    if(cmd.args && input.startsWith(cmd.command)) {
+        return [ true, cmd.command ]
+    }
+    if(cmd.aliases) {
+        for(const alias of cmd.aliases) {
+            if(!cmd.args && input === alias) {
+                return [ true, alias ]
+            }
+            if(cmd.args && input.startsWith(alias)) {
+                return [ true, alias ]
+            }
+        }
+    }
+    return [ false, null ]
+}
+
+export function getGameDateString(date: Date): string {
+    const year = date.getUTCFullYear().toString()
+    const month = padNumber(date.getUTCMonth() + 1, 2)
+    const day = padNumber(date.getUTCDate(), 2)
+    return `${year}-${month}-${day}T00:00:00`
+}

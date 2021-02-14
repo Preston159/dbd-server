@@ -10,9 +10,9 @@ import cookieParser from 'cookie-parser'
 import nunjucks from 'nunjucks'
 import rateLimit from 'express-rate-limit'
 
-import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray } from './util.js'
+import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff, checkCmdMatch } from './util.js'
 import { getIp } from './ipaddr.js'
-import { decryptSave } from './saveman.js'
+import { decryptDbD, decryptSave, encryptDbD } from './saveman.js'
 import idToName from './idtoname.js'
 import { log, logReq, init as initLogger, logListItem, logListItems, logBlankLine, logError } from './logger.js'
 import { isCdn } from './cdn.js'
@@ -26,6 +26,8 @@ import { isSessionActive, getSession, createSession, deleteSession, findSessionB
 import * as StartingValues from './starting-values.js'
 import { DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
 import { checkVersion } from './version-checker.js'
+import { loadAndEncryptJson } from './jsonman.js'
+import { getGameEventData } from './events.js'
 
 //#region copyright notice
 console.log(
@@ -68,10 +70,6 @@ app.use((req, res, next) => {
         type = 'CDN'
     }
     logReq(req, type)
-    if(type === 'CDN') {
-        res.status(204).end()
-        return
-    }
     next()
 })
 
@@ -133,7 +131,13 @@ const CONFIG_STRING = (() => {
     return JSON.stringify(arr)
 })()
 // load catalog.json file
-const CATALOG = fs.readFileSync(path.join('.', 'catalog.json'))
+const CATALOG = loadAndEncryptJson(path.join('.', 'json', 'catalog.json'))
+// load contentSchedule.json
+const CONTENT_SCHEDULE = loadAndEncryptJson(path.join('.', 'json', 'contentSchedule.json'))
+// load specialEventsContent.json
+const SPECIAL_EVENTS_CONTENT = getGameEventData()
+// load newsContent.json
+const NEWS_CONTENT = loadAndEncryptJson(path.join('.', 'json', 'newsContent.json'))
 
 const WHITELIST_FILE = path.join('.', 'whitelist.txt')
 let WHITELIST: string[] = WHITELIST_ENABLED && fs.existsSync(WHITELIST_FILE) ?
@@ -523,7 +527,7 @@ app.get('/api/v1/inventories', (req, res) => {
 })
 
 app.get('/specialEvents/specialEventsContent.json', (req, res) => {
-    setBinary(res).status(204).end()
+    setBinary(res).send(SPECIAL_EVENTS_CONTENT)
 })
 
 app.get('/bonusPointEvents/bonusPointEventsContent.json', (req, res) => {
@@ -531,11 +535,11 @@ app.get('/bonusPointEvents/bonusPointEventsContent.json', (req, res) => {
 })
 
 app.get('/schedule/contentSchedule.json', (req, res) => {
-    setBinary(res).status(204).end()
+    setBinary(res).send(CONTENT_SCHEDULE)
 })
 
 app.get('/news/newsContent.json', (req, res) => {
-    setBinary(res).status(204).end()
+    setBinary(res).send(NEWS_CONTENT)
 })
 
 app.get('/api/v1/players/me/states/FullProfile/binary', (req, res) => {
@@ -828,7 +832,9 @@ const CLI_CMDS: CliCommand[] = [
         command: 'help',
         aliases: [ '?' ],
         description: 'Lists all commands',
+        args: false,
         run: () => {
+            console.log('\nCommands:')
             for(const cmd of CLI_CMDS) {
                 console.log(cmd.command + (cmd.description ? ` - ${cmd.description}` : ''))
             }
@@ -837,6 +843,7 @@ const CLI_CMDS: CliCommand[] = [
     {
         command: 'show w',
         description: 'Displays warranty information',
+        args: false,
         run: () => {
             console.log(
                 '  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n' +
@@ -864,6 +871,7 @@ const CLI_CMDS: CliCommand[] = [
         command: 'count connections',
         aliases: [ 'count c' ],
         description: 'Displays the number of active HTTP/S connections',
+        args: false,
         run: () => {
             console.log(`Active connections: ${connectionTracker.getActiveConnectionCount()}`)
         },
@@ -872,6 +880,7 @@ const CLI_CMDS: CliCommand[] = [
         command: 'count sessions',
         aliases: [ 'count s' ],
         description: 'Displays the number of active game sessions',
+        args: false,
         run: () => {
             console.log(`Active sessions: ${getActiveSessionCount()}`)
         },
@@ -879,11 +888,65 @@ const CLI_CMDS: CliCommand[] = [
     {
         command: 'stop',
         description: 'Shuts down the server',
+        args: false,
         run: () => {
             initShutdown()
         },
     },
 ]
+
+// add debug commands if in debug mode
+if(DEBUG) {
+    const DEBUG_CMDS: CliCommand[] = [
+        {
+            command: 'encrypt',
+            args: false,
+            run: () => {
+                const ENCRYPTED_FILE = path.join('.', 'encryption', 'encrypted.txt')
+                const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
+                const plaintext = fs.readFileSync(DECRYPTED_FILE)
+                fs.writeFileSync(ENCRYPTED_FILE, encryptDbD(plaintext))
+            },
+        },
+        {
+            command: 'decrypt',
+            args: false,
+            run: () => {
+                const ENCRYPTED_FILE = path.join('.', 'encryption', 'encrypted.txt')
+                const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
+                const encrypted = fs.readFileSync(ENCRYPTED_FILE)
+                fs.writeFileSync(DECRYPTED_FILE, decryptDbD(encrypted.toString()))
+            },
+        },
+        {
+            command: 'testencryption',
+            args: false,
+            run: () => {
+                const DECRYPTED_FILE = path.join('.', 'encryption', 'plaintext.txt')
+                const EXPECTED_FILE = path.join('.', 'encryption', 'expected.txt')
+                const plaintext = fs.readFileSync(DECRYPTED_FILE)
+                const expected = fs.readFileSync(EXPECTED_FILE).toString()
+                const encrypted = encryptDbD(plaintext)
+                const diff = stringDiff(expected, encrypted)
+                if(diff === -1) {
+                    console.log('Files are the same')
+                } else {
+                    console.log(`Files differ at byte ${diff}`)
+                }
+            },
+        },
+        {
+            command: 'eval',
+            args: true,
+            run: (args) => {
+                eval(args.join(' ')) // eslint-disable-line no-eval
+            },
+        },
+    ]
+    for(const cmd of DEBUG_CMDS) {
+        CLI_CMDS.push(cmd)
+    }
+}
 
 process.stdin.setEncoding('utf8')
 
@@ -893,8 +956,18 @@ const readInput = (rawInput: unknown) => {
     }
     const input = rawInput.replace(/\r?\n/g, '') // remove newlines
     for(const cmd of CLI_CMDS) {
-        if(input === cmd.command || (cmd.aliases && cmd.aliases.includes(input))) {
-            cmd.run()
+        const match = checkCmdMatch(cmd, input)
+        if(match[0]) {
+            if(!cmd.args) {
+                cmd.run()
+            } else {
+                const argsRaw = input.substr(match[1].length)
+                if(argsRaw.length === 0) {
+                    cmd.run([])
+                } else {
+                    cmd.run(argsRaw.substr(1).split(' '))
+                }
+            }
             break
         }
     }
