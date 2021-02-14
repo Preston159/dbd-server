@@ -806,6 +806,10 @@ app.post('/api/v1/extensions/ownedProducts/reportOwnedProducts', (req, res) => {
     setJson(res).send('Ok')
 })
 
+app.post('/api/v1/extensions/rewards/grantCurrency', (req, res) => {
+    setJson(res).status(204).end()
+})
+
 app.post('/api/v1/extensions/store/steamGetPendingTransactions', (req, res) => {
     setJson(res).status(204).end()
 })
@@ -942,7 +946,8 @@ const CLI_CMDS: CliCommand[] = [
         },
     },
     {
-        command: 'show w',
+        command: 'show warranty',
+        aliases: [ 'show w' ],
         description: 'Displays warranty information',
         args: false,
         run: () => {
@@ -988,6 +993,7 @@ const CLI_CMDS: CliCommand[] = [
     },
     {
         command: 'stop',
+        aliases: [ 'exit', 'quit' ],
         description: 'Shuts down the server',
         args: false,
         run: () => {
