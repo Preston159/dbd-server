@@ -845,7 +845,8 @@ const CLI_CMDS: CliCommand[] = [
         },
     },
     {
-        command: 'show w',
+        command: 'show warranty',
+        aliases: [ 'show w' ],
         description: 'Displays warranty information',
         args: false,
         run: () => {
