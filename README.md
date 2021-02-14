@@ -36,6 +36,10 @@ Pull requests are welcome, but try to stick to the style of surrounding code whe
 
 If you think something could be improved or fixed but don't want to do it yourself, [create an issue](https://github.com/Preston159/dbd-server/issues/new)! Please include as much information as possible in issues, especially when concerning a bug.
 
+## Contributors
+
+- [Midnoclose](https://github.com/Midnoclose)
+
 
 # Copyright Notice
 
