@@ -328,6 +328,10 @@ export function genUUID(provider = false, providerId = ''): string {
     }
 }
 
+export function genMatchUUID(): string {
+    return `${getRandomHexDigits(8)}-${getRandomHexDigits(4)}-${getRandomHexDigits(4)}-${getRandomHexDigits(4)}-${getRandomHexDigits(12)}`
+}
+
 //#region date-time
 
 const getYearString = (when: Date) => padNumber(when.getFullYear(), 4)

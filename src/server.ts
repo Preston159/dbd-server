@@ -1,4 +1,4 @@
-import type { Session, ConfigValue, RequestMethod, RequestType, CliCommand } from './types/types'
+import type { Session, ConfigValue, RequestMethod, RequestType, CliCommand, GameEvent, QueueData } from './types/types'
 import type { Response, Request } from 'express'
 
 import * as path from 'path'
@@ -22,12 +22,13 @@ import debugResponse, { setResponse, unsetResponse } from './debug-response.js'
 import * as connectionTracker from './connection-tracker.js'
 import respondEmpty, { addAutoResponses } from './respond-empty.js'
 import { getSteamIdFromToken } from './steam-manager.js'
-import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray, getActiveSessionCount } from './session-manager.js'
+import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray, getActiveSessionCount, removeExpiredSessions } from './session-manager.js'
 import * as StartingValues from './starting-values.js'
 import { DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
 import { checkVersion } from './version-checker.js'
 import { loadAndEncryptJson } from './jsonman.js'
 import { getGameEventData } from './events.js'
+import { createMatchResponse, deleteMatch, deleteOldMatches, getLobbyById, getQueueStatus, isOwner, queuePlayer, registerMatch, removePlayerFromQueue } from './matchmaking.js'
 
 //#region copyright notice
 console.log(
@@ -726,23 +727,75 @@ app.get('/api/v1/config/:key', (req, res) => {
 })
 
 app.post('/api/v1/queue', (req, res) => {
-    res.status(404).end()
+    try {
+        const body = JSON.parse(req.body) as QueueData
+        if(!body.checkOnly) { // new queue
+            queuePlayer(body, getSession(req.cookies.bhvrSession))
+            sendJson(res, {
+                queueData: {
+                    ETA: -10000,
+                    position: 0,
+                    sizeA: body.side === 'A' ? 1 : 0,
+                    sizeB: body.side === 'B' ? 1 : 0,
+                    stable: false,
+                },
+                status: 'QUEUED',
+            })
+        } else {
+            sendJson(res, getQueueStatus(body.side, getSession(req.cookies.bhvrSession)))
+        }
+    } catch {
+        res.status(500).end()
+    }
 })
 
 app.post('/api/v1/queue/cancel', (req, res) => {
-    res.status(404).end()
+    try {
+        removePlayerFromQueue(req.cookies.bhvrSession)
+    } catch {
+        res.status(500).end()
+        return
+    }
+    res.status(204).end()
 })
 
 app.post('/api/v1/match/:matchId/register', (req, res) => {
-    res.status(404).end()
+    const { matchId } = req.params as { matchId: string }
+    let data: { customData: { SessionSettings: string } }
+    try {
+        data = JSON.parse(req.body) as { customData: { SessionSettings: string } }
+    } catch {
+        res.status(500).end()
+        return
+    }
+    const response = registerMatch(matchId, data.customData.SessionSettings)
+    if(response === null) {
+        res.status(500).end()
+        return
+    }
+    sendJson(res, response)
 })
 
 app.get('/api/v1/match/:matchId', (req, res) => {
-    res.status(404).end()
+    sendJson(res, createMatchResponse(req.params.matchId))
 })
 
 app.put('/api/v1/match/:matchId/:reason', (req, res) => {
-    res.status(404).end()
+    const { matchId } = req.params as { matchId: string }
+    try {
+        const [ lobby ] = getLobbyById(req.params.matchId)
+        if(isOwner(matchId, req.cookies.bhvrSession)) {
+            lobby.reason = req.params.reason
+            sendJson(res, createMatchResponse(matchId, true))
+            deleteMatch(req.params.matchId)
+        } else {
+            res.status(500).end()
+            return
+        }
+    } catch {
+        res.status(500).end()
+        return
+    }
 })
 
 app.delete('/api/v1/match/:matchId/user/:userId', (req, res) => {
@@ -763,6 +816,54 @@ app.post('/api/v1/extensions/store/getAvailableBundles', (req, res) => {
 
 app.get('/banners/featuredPageContent.json', (req, res) => {
     setJson(res).status(204).end()
+})
+
+app.post('/api/v1/extensions/specialEvents/getEventProgression', (req, res) => {
+    try {
+        const data = JSON.parse(req.body).data as { eventId: GameEvent }
+        if(data.eventId === 'Halloween2018') {
+            sendJson(res, {
+                eventId: 'Halloween2018',
+                version: 1,
+                objectives: [
+                    {
+                        id: "HalloweenKillerVial",
+                        repetitions: 0,
+                        maxRepetitions: 60,
+                    }, {
+                        id: "HalloweenSurvivorVial",
+                        repetitions: 0,
+                        maxRepetitions: 60,
+                    },
+                ],
+            })
+        } else {
+            res.status(204).end()
+        }
+    } catch {
+        res.status(500).end()
+    }
+})
+
+app.post('/api/v1/extensions/objectives/getObjectiveProgression', (req, res) => {
+    try {
+        const data = JSON.parse(req.body).data as { objectiveId: string }
+        if(data.objectiveId === 'LunarLantern') {
+            sendJson(res, {
+                currentProgress: 0,
+                currentProgressUpperBound: 100,
+                maxTier: 9,
+                maxTotalProgression: 4500,
+                objectiveVersion: 2,
+                tier: 1,
+                totalProgress: 0,
+            })
+        } else {
+            res.status(204).end()
+        }
+    } catch {
+        res.status(500).end()
+    }
 })
 
 //#endregion
@@ -974,5 +1075,14 @@ const readInput = (rawInput: unknown) => {
 }
 
 process.stdin.on('data', readInput)
+
+//#endregion
+
+//#region regular cleanup
+
+setInterval(() => {
+    removeExpiredSessions()
+    deleteOldMatches()
+}, 10 * 60 * 1000)
 
 //#endregion

@@ -1,10 +1,12 @@
 {
-    // if true, logs will be output to console
+    # if true, logs will be output to console
     "console": true,
-    // if true, logs will be written to file
+    # if true, logs will be written to file
     "file": true,
-    // the directory in which log files are saved
+    # the directory in which log files are saved
     "logDir": "logs",
-    // the name of the server log file
-    "fileName": "server.log"
+    # the name of the server log file
+    "fileName": "server.log",
+    # if true, failed requests will be logged
+    "failedRequests": false
 }

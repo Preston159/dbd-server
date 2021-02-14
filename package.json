@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "dbd-server",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "",
   "main": "server.js",
   "dependencies": {
@@ -25,7 +25,7 @@
     "@types/node-fetch": "^2.5.8"
   },
   "scripts": {
-    "prestart": "npm-run-all --serial lint build",
+    "prestart": "npm-run-all --serial build",
     "start": "node build/server.js",
     "build": "tsc",
     "lint": "eslint -c .eslintrc.cjs --ext .ts src/",
