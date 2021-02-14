@@ -1,4 +1,4 @@
-import type { Session, ConfigValue, RequestMethod, RequestType, CliCommand, GameEvent } from './types/types'
+import type { Session, ConfigValue, RequestMethod, RequestType, CliCommand, GameEvent, QueueData } from './types/types'
 import type { Response, Request } from 'express'
 
 import * as path from 'path'
@@ -28,6 +28,7 @@ import { DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TI
 import { checkVersion } from './version-checker.js'
 import { loadAndEncryptJson } from './jsonman.js'
 import { getGameEventData } from './events.js'
+import { createMatchResponse, deleteMatch, getLobbyById, getQueueStatus, isOwner, queuePlayer, registerMatch, removePlayerFromQueue } from './matchmaking.js'
 
 //#region copyright notice
 console.log(
@@ -726,23 +727,75 @@ app.get('/api/v1/config/:key', (req, res) => {
 })
 
 app.post('/api/v1/queue', (req, res) => {
-    res.status(404).end()
+    try {
+        const body = JSON.parse(req.body) as QueueData
+        if(!body.checkOnly) { // new queue
+            queuePlayer(body, getSession(req.cookies.bhvrSession))
+            sendJson(res, {
+                queueData: {
+                    ETA: -10000,
+                    position: 0,
+                    sizeA: body.side === 'A' ? 1 : 0,
+                    sizeB: body.side === 'B' ? 1 : 0,
+                    stable: false,
+                },
+                status: 'QUEUED',
+            })
+        } else {
+            sendJson(res, getQueueStatus(body.side, getSession(req.cookies.bhvrSession)))
+        }
+    } catch {
+        res.status(500).end()
+    }
 })
 
 app.post('/api/v1/queue/cancel', (req, res) => {
-    res.status(404).end()
+    try {
+        removePlayerFromQueue(req.cookies.bhvrSession)
+    } catch {
+        res.status(500).end()
+        return
+    }
+    res.status(204).end()
 })
 
 app.post('/api/v1/match/:matchId/register', (req, res) => {
-    res.status(404).end()
+    const { matchId } = req.params as { matchId: string }
+    let data: { customData: { SessionSettings: string } }
+    try {
+        data = JSON.parse(req.body) as { customData: { SessionSettings: string } }
+    } catch {
+        res.status(500).end()
+        return
+    }
+    const response = registerMatch(matchId, data.customData.SessionSettings)
+    if(response === null) {
+        res.status(500).end()
+        return
+    }
+    sendJson(res, response)
 })
 
 app.get('/api/v1/match/:matchId', (req, res) => {
-    res.status(404).end()
+    sendJson(res, createMatchResponse(req.params.matchId))
 })
 
 app.put('/api/v1/match/:matchId/:reason', (req, res) => {
-    res.status(404).end()
+    const { matchId } = req.params as { matchId: string }
+    try {
+        const [ lobby ] = getLobbyById(req.params.matchId)
+        if(isOwner(matchId, req.cookies.bhvrSession)) {
+            lobby.reason = req.params.reason
+            sendJson(res, createMatchResponse(matchId, true))
+            deleteMatch(req.params.matchId)
+        } else {
+            res.status(500).end()
+            return
+        }
+    } catch {
+        res.status(500).end()
+        return
+    }
 })
 
 app.delete('/api/v1/match/:matchId/user/:userId', (req, res) => {

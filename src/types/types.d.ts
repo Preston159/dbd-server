@@ -29,8 +29,10 @@ export type QueueDataLatency = {
     latency: number
 }
 
+export type Side = 'A' | 'B'
+
 export type QueueData = {
-    side: 'A' | 'B'
+    side: Side
     checkOnly: boolean
     latencies: QueueDataLatency[]
 }
@@ -61,6 +63,7 @@ export type Match = {
 export type QueuedPlayer = {
     bhvrSession: string
     userId: string
+    side: Side
     location?: ConnectionInfo
     lastCheckedForMatch?: number
 }
@@ -87,6 +90,7 @@ export type LoggerOptions = {
     file: boolean
     logDir: string
     fileName: string
+    failedRequests: boolean
 }
 
 export type FileParts = {
