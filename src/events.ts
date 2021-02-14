@@ -15,7 +15,6 @@ export function getGameEventData(): string {
     const end = new Date()
     end.setDate(end.getDate() + 180)
 
-
     for(const gameEvent of eventData.specialEvents) {
         if(events[gameEvent.eventId]) {
             gameEvent.mainEndTime = getGameDateString(end)
