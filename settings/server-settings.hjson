@@ -1,8 +1,8 @@
 {
     # if true, the debug browser page will only be available over HTTPS
     "debugRequireHttps": true,
-    # if true, all player saves will be written to files
-    # WARNING: this may create a lot of large files very quickly
+    # if true, all player saves will be written to files and used for persistent storage
+    # only works for clients connected using Steam
     "saveToFile": false,
     # the length of each player session in seconds
     # 86400 = 24 hours

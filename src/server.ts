@@ -78,10 +78,16 @@ app.use((req, res, next) => {
 app.use(rateLimit({
     windowMs: RATE_LIMIT_TIME * 1000,
     max: RATE_LIMIT_COUNT,
+    skip: (req: Request<any>) => {
+        return req.ip === '127.0.0.1'
+    },
 }))
 app.use("/api/v1/auth/login/", rateLimit({
     windowMs: RATE_LIMIT_TIME * 1000,
     max: LOGIN_LIMIT_COUNT,
+    skip: (req: Request<any>) => {
+        return req.ip === '127.0.0.1'
+    },
 }))
 
 // set up POST and cookie parsing
@@ -156,6 +162,7 @@ const checkWhitelist = (ip: string) => {
 
 const setJson = (res: Response<any>) => res.set('Content-Type', 'application/json')
 const setBinary = (res: Response<any>) => res.set('Content-Type', 'binary/octet-stream')
+const setApplication = (res: Response<any>) => res.set('Content-Type', 'application/octet-stream')
 const sendJson = (res: Response<any>, obj: object) => setJson(res).send(JSON.stringify(obj)) // eslint-disable-line @typescript-eslint/ban-types
 const sendBinary = (res: Response<any>, data: string | Buffer) => setBinary(res).send(data)
 const redirectTo = (res: Response<any>, url: string) => res.status(303).location(url).end()
@@ -545,14 +552,29 @@ app.get('/news/newsContent.json', (req, res) => {
 
 app.get('/api/v1/players/me/states/FullProfile/binary', (req, res) => {
     const bhvrSession = req.cookies.bhvrSession as string
-    let profileData: string
+    const session = getSession(bhvrSession)
     if(!isSessionActive(bhvrSession)) {
-        profileData = ''
+        res.status(500).end()
     } else {
-        const session = getSession(bhvrSession)
-        profileData = session.profile || ''
+        if(session.profile) {
+            setApplication(res).send(session.profile)
+            return
+        }
+        const savePath = path.join('saves', `save_${session.clientIds.userId}`)
+        void saveFileExists(session).then((exists) => {
+            if(!exists) {
+                setApplication(res).status(200).send('')
+                return
+            }
+            fs.readFile(savePath, (readErr, data) => {
+                if(readErr) {
+                    setApplication(res).status(200).send('')
+                    return
+                }
+                setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').status(200).send(data)
+            })
+        })
     }
-    setBinary(res).status(200).send(profileData)
 })
 
 app.post('/api/v1/players/me/states/binary', (req, res) => {
@@ -570,7 +592,8 @@ app.post('/api/v1/players/me/states/binary', (req, res) => {
     session.profile = req.body as string
         session.profileVersion = version
         log(`pushed save data for ${session.clientIds.userId}`)
-        writeSaveToFile(session, version)
+        writeSaveToFile(session)
+            .catch(logError)
         sendJson(res, {
             version: version + 1,
             stateName: 'FullProfile',
@@ -590,10 +613,13 @@ app.get('/api/v1/wallet/currencies/BonusBloodpoints', (req, res) => {
         return
     }
     const session = getSession(bhvrSession)
-    sendJson(res, {
-        userId: session.clientIds.userId,
-        balance: StartingValues.bloodpoints,
-        currency: 'BonusBloodpoints',
+    const savePath = path.join('saves', `save_${session.clientIds.userId}`)
+    fs.stat(savePath, (err) => {
+        sendJson(res, {
+            userId: session.clientIds.userId,
+            balance: err ? StartingValues.bloodpoints : 0, // only give starting bp if user has no persistent save
+            currency: 'BonusBloodpoints',
+        })
     })
 })
 
@@ -636,7 +662,24 @@ app.post('/api/v1/extensions/wallet/migrateCurrencies', (req, res) => {
 })
 
 app.post('/api/v1/extensions/wallet/getLocalizedCurrenciesAfterLogin', (req, res) => {
-    setJson(res).send('{"list":[{"balance":0,"currency":"Dust"},{"balance":0,"currency":"Bloodpoints"},{"balance":0,"currency":"BonusBloodpoints"},{"balance":0,"currency":"HardCurrency"},{"balance":0,"currency":"testCurrency"},{"balance":0,"currency":"Shards"},{"balance":0,"currency":"Cells"},{"balance":0,"currency":"USCents"},{"balance":0,"currency":"Halloween2018Coins"},{"balance":0,"currency":"HalloweenCoins"},{"balance":0,"currency":"LunarCoins"},{"balance":0,"currency":"LunarNewYearCoins"},{"balance":0,"currency":"HalloweenEventCurrency"}]}')
+    sendJson(res, {
+        list: [
+            { balance: 0, currency: "Dust" },
+            { balance: 0, currency: "Bloodpoints" },
+            { balance: 0, currency: "BonusBloodpoints" },
+            { balance: 0, currency: "HardCurrency" },
+            { balance: 0, currency: "testCurrency" },
+            { balance: 0, currency: "Shards" },
+            { balance: 0, currency: "Cells" },
+            { balance: 0, currency: "USCents" },
+            { balance: 0, currency: "Halloween2018Coins" },
+            { balance: 0, currency: "HalloweenCoins" },
+            { balance: 0, currency: "LunarCoins" },
+            { balance: 0, currency: "LunarNewYearCoins" },
+            { balance: 0, currency: "HalloweenEventCurrency" },
+        ],
+    })
+    return
 })
 
 app.get('/api/v1/consent', (req, res) => {
@@ -878,11 +921,55 @@ app.use(failureLogger(true))
 
 //#region misc functions
 
-function writeSaveToFile(session: Session, version: number) {
-    if(!SAVE_TO_FILE) {
-        return
-    }
-    fs.writeFileSync(path.join('saves', `save_${session.clientIds.userId}_${version}`), session.profile)
+function writeSaveToFile(session: Session): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        if(!SAVE_TO_FILE) {
+            resolve()
+            return
+        }
+        if(!session.isSteam) {
+            resolve()
+            return
+        }
+        const saveDir = path.join('.', 'saves')
+        const savePath = path.join('.', 'saves', `save_${session.clientIds.userId}`)
+        const write = () => {
+            fs.writeFile(savePath, session.profile, (err) => {
+                if(err) {
+                    reject(err)
+                    return
+                }
+                resolve()
+            })
+        }
+        fs.stat(saveDir, (err) => {
+            if(err) {
+                fs.mkdir(saveDir, (mkdirErr) => {
+                    if(mkdirErr) {
+                        reject(err)
+                        return
+                    }
+                    write()
+                })
+            } else {
+                write()
+            }
+        })
+    })
+}
+
+function saveFileExists(session: Session): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+        const savePath = path.join('.', 'saves', `save_${session.clientIds.userId}`)
+        fs.stat(savePath, (err) => {
+            if(err) {
+                resolve(false)
+                return
+            }
+            resolve(true)
+            return
+        })
+    })
 }
 
 //#endregion
