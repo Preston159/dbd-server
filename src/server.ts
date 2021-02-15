@@ -981,7 +981,7 @@ function writeSaveToFile(session: Session): Promise<void> {
             if(err) {
                 fs.mkdir(saveDir, (mkdirErr) => {
                     if(mkdirErr) {
-                        reject(err)
+                        reject(mkdirErr)
                         return
                     }
                     write()
