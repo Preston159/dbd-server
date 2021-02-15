@@ -552,29 +552,29 @@ app.get('/news/newsContent.json', (req, res) => {
 
 app.get('/api/v1/players/me/states/FullProfile/binary', (req, res) => {
     const bhvrSession = req.cookies.bhvrSession as string
-    const session = getSession(bhvrSession)
     if(!isSessionActive(bhvrSession)) {
-        res.status(500).end()
-    } else {
-        if(session.profile) {
-            setApplication(res).send(session.profile)
+        res.status(404).end()
+        return
+    }
+    const session = getSession(bhvrSession)
+    if(session.profile) {
+        setApplication(res).send(session.profile)
+        return
+    }
+    const savePath = path.join('saves', `save_${session.clientIds.userId}`)
+    void saveFileExists(session).then((exists) => {
+        if(!exists) {
+            setApplication(res).status(200).send('')
             return
         }
-        const savePath = path.join('saves', `save_${session.clientIds.userId}`)
-        void saveFileExists(session).then((exists) => {
-            if(!exists) {
+        fs.readFile(savePath, (readErr, data) => {
+            if(readErr) {
                 setApplication(res).status(200).send('')
                 return
             }
-            fs.readFile(savePath, (readErr, data) => {
-                if(readErr) {
-                    setApplication(res).status(200).send('')
-                    return
-                }
-                setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').status(200).send(data)
-            })
+            setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').status(200).send(data)
         })
-    }
+    })
 })
 
 app.post('/api/v1/players/me/states/binary', (req, res) => {
@@ -770,10 +770,15 @@ app.get('/api/v1/config/:key', (req, res) => {
 })
 
 app.post('/api/v1/queue', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     try {
         const body = JSON.parse(req.body) as QueueData
         if(!body.checkOnly) { // new queue
-            queuePlayer(body, getSession(req.cookies.bhvrSession))
+            queuePlayer(body, getSession(bhvrSession))
             sendJson(res, {
                 queueData: {
                     ETA: -10000,
@@ -785,7 +790,7 @@ app.post('/api/v1/queue', (req, res) => {
                 status: 'QUEUED',
             })
         } else {
-            sendJson(res, getQueueStatus(body.side, getSession(req.cookies.bhvrSession)))
+            sendJson(res, getQueueStatus(body.side, getSession(bhvrSession)))
         }
     } catch {
         res.status(500).end()
@@ -793,8 +798,13 @@ app.post('/api/v1/queue', (req, res) => {
 })
 
 app.post('/api/v1/queue/cancel', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     try {
-        removePlayerFromQueue(req.cookies.bhvrSession)
+        removePlayerFromQueue(bhvrSession)
     } catch {
         res.status(500).end()
         return
@@ -803,6 +813,11 @@ app.post('/api/v1/queue/cancel', (req, res) => {
 })
 
 app.post('/api/v1/match/:matchId/register', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     const { matchId } = req.params as { matchId: string }
     let data: { customData: { SessionSettings: string } }
     try {
@@ -820,14 +835,24 @@ app.post('/api/v1/match/:matchId/register', (req, res) => {
 })
 
 app.get('/api/v1/match/:matchId', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     sendJson(res, createMatchResponse(req.params.matchId))
 })
 
 app.put('/api/v1/match/:matchId/:reason', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     const { matchId } = req.params as { matchId: string }
     try {
         const [ lobby ] = getLobbyById(req.params.matchId)
-        if(isOwner(matchId, req.cookies.bhvrSession)) {
+        if(isOwner(matchId, bhvrSession)) {
             lobby.reason = req.params.reason
             sendJson(res, createMatchResponse(matchId, true))
             deleteMatch(req.params.matchId)
@@ -866,6 +891,11 @@ app.get('/banners/featuredPageContent.json', (req, res) => {
 })
 
 app.post('/api/v1/extensions/specialEvents/getEventProgression', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     try {
         const data = JSON.parse(req.body).data as { eventId: GameEvent }
         if(data.eventId === 'Halloween2018') {
@@ -893,6 +923,11 @@ app.post('/api/v1/extensions/specialEvents/getEventProgression', (req, res) => {
 })
 
 app.post('/api/v1/extensions/objectives/getObjectiveProgression', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     try {
         const data = JSON.parse(req.body).data as { objectiveId: string }
         if(data.objectiveId === 'LunarLantern') {
