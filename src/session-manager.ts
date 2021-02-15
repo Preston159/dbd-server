@@ -35,6 +35,7 @@ export function createSession(now: number, validFor: number, forProvider = false
         bhvrSession: genBhvrSession(now, validFor),
         guestSession: '',
         totalXp: StartingValues.playerLevelObject.totalXp,
+        isSteam: forProvider,
     }
     session.guestSession = genGuestSession(session.clientIds.tokenId)
     activeSessions.set(session.bhvrSession, session)
@@ -59,6 +60,7 @@ export function createFakeSession(): Session {
         },
         isFake: true,
         totalXp: 0,
+        isSteam: false,
     }
     activeSessions.set(session.bhvrSession, session)
     return session
