@@ -3,9 +3,7 @@
     "debugRequireHttps": true,
     # if true, all player saves will be written to files and used for persistent storage
     # only works for clients connected using Steam
-    # if false, old persistent saves will still be used, but will not be updated
-    # delete the `saves` directory to remove old saves
-    "saveToFile": true,
+    "saveToFile": false,
     # the length of each player session in seconds
     # 86400 = 24 hours
     "sessionLength": 86400,
