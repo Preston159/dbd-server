@@ -78,10 +78,16 @@ app.use((req, res, next) => {
 app.use(rateLimit({
     windowMs: RATE_LIMIT_TIME * 1000,
     max: RATE_LIMIT_COUNT,
+    skip: (req: Request<any>) => {
+        return req.ip === '127.0.0.1'
+    },
 }))
 app.use("/api/v1/auth/login/", rateLimit({
     windowMs: RATE_LIMIT_TIME * 1000,
     max: LOGIN_LIMIT_COUNT,
+    skip: (req: Request<any>) => {
+        return req.ip === '127.0.0.1'
+    },
 }))
 
 // set up POST and cookie parsing
