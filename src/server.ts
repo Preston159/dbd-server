@@ -142,7 +142,7 @@ const CATALOG = loadAndEncryptJson(path.join('.', 'json', 'catalog.json'))
 // load contentSchedule.json
 const CONTENT_SCHEDULE = loadAndEncryptJson(path.join('.', 'json', 'contentSchedule.json'))
 // load specialEventsContent.json
-const SPECIAL_EVENTS_CONTENT = getGameEventData()
+let SPECIAL_EVENTS_CONTENT = getGameEventData()
 // load newsContent.json
 const NEWS_CONTENT = loadAndEncryptJson(path.join('.', 'json', 'newsContent.json'))
 
@@ -1067,6 +1067,7 @@ const CLI_CMDS: CliCommand[] = [
                 if(cmd.usage) {
                     console.log('  ' + cmd.usage)
                 }
+            }
         },
     },
     {
@@ -1122,6 +1123,26 @@ const CLI_CMDS: CliCommand[] = [
         args: false,
         run: () => {
             initShutdown()
+        },
+    },
+    {
+        command: 'events',
+        aliases: [ 'event' ],
+        usage: 'events enable [None|Anniversary2019|Lunar2019|Winter2018|Halloween2018|Summer|Lunar|Winter2017|Halloween2017',
+        description: 'Manages events. Will not affect already active sessions.',
+        args: true,
+        run: (args) => {
+            const validEvents: GameEvent[] = [ 'Halloween2017', 'Winter2017', 'Lunar', 'Summer', 'Halloween2018', 'Winter2018', 'Lunar2019', 'Anniversary2019', 'None' ]
+            if(args[0] !== 'enable') {
+                console.log('Unrecognized argument. Type `help` for help.')
+                return
+            }
+            if(!validEvents.includes(args[1] as GameEvent)) {
+                console.log('Unrecognized event. Type `help` for help.')
+                return
+            }
+            SPECIAL_EVENTS_CONTENT = getGameEventData(args[1] as GameEvent)
+            console.log(`Enabled event ${args[1]}`)
         },
     },
 ]

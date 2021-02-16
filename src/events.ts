@@ -1,4 +1,4 @@
-import type { EventsJson, SpecialEventsContent } from './types/types'
+import type { EventsJson, GameEvent, SpecialEventsContent } from './types/types'
 
 import * as path from 'path'
 import * as fs from 'fs'
@@ -9,14 +9,14 @@ import { getGameDateString } from './util.js'
 
 const events = HJSON.parse(fs.readFileSync(path.join('.', 'settings', 'events.hjson')).toString()) as EventsJson
 
-export function getGameEventData(): string {
+export function getGameEventData(event?: GameEvent): string {
     const eventData = JSON.parse(fs.readFileSync(path.join('.', 'json', 'specialEventsContent.json')).toString()) as SpecialEventsContent
     const now = new Date()
     const end = new Date()
     end.setDate(end.getDate() + 180)
 
     for(const gameEvent of eventData.specialEvents) {
-        if(events[gameEvent.eventId]) {
+        if((!event &&events[gameEvent.eventId]) || (event && gameEvent.eventId === event)) {
             gameEvent.mainEndTime = getGameDateString(end)
             gameEvent.postEndTime = getGameDateString(end)
             gameEvent.startTime = getGameDateString(now)
