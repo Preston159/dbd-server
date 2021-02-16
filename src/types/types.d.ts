@@ -143,6 +143,7 @@ export type GithubTagsResponse = {
 
 export type CliCommand = {
     command: string
+    usage?: string
     aliases?: string[]
     description?: string
     args: boolean

@@ -1063,7 +1063,7 @@ const CLI_CMDS: CliCommand[] = [
         run: () => {
             console.log('\nCommands:')
             for(const cmd of CLI_CMDS) {
-                console.log(cmd.command + (cmd.description ? ` - ${cmd.description}` : ''))
+                console.log((cmd.usage ? cmd.usage : cmd.command) + (cmd.description ? ` - ${cmd.description}` : ''))
             }
         },
     },
