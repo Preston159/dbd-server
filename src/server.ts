@@ -1059,13 +1059,19 @@ const CLI_CMDS: CliCommand[] = [
         command: 'help',
         aliases: [ '?' ],
         description: 'Lists all commands',
-        args: false,
-        run: () => {
+        args: true,
+        run: (args) => {
+            let searchCommand: string
+            if(args && args[0]) {
+                searchCommand = args[0]
+            }
             console.log('\nCommands:')
             for(const cmd of CLI_CMDS) {
-                console.log(cmd.command + (cmd.description ? ` - ${cmd.description}` : ''))
-                if(cmd.usage) {
-                    console.log('  ' + cmd.usage)
+                if(!searchCommand || searchCommand === cmd.command) {
+                    console.log(cmd.command + (cmd.description ? ` - ${cmd.description}` : ''))
+                    if(cmd.usage) {
+                        console.log('  ' + cmd.usage)
+                    }
                 }
             }
         },
