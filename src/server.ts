@@ -122,7 +122,7 @@ const ipAddr = getIp()
 
 const DEBUG_FILE = path.join('.', 'DEBUG')
 const DEBUG = fs.existsSync(DEBUG_FILE)
-const VERSIONS_STRING = '{"availableVersions":{"2.6.0.100094":"2.6.0.100094-1557154926","2.6.0.84905":"2.6.0.84905-1554217487","2.6.0.98545":"2.6.0.98545-1556291021","2.6.0.98763":"2.6.0.98763-1556301195","2.7.0.1":"2.7.0.1-1557939464","3.0.0.13":"3.0.0.13-1561474922","3.0.0.16":"3.0.0.16-1562079672","3.0.0.4":"3.0.0.4-1560778720","m_3.0.0.2":"m_3.0.0.2-1560873223"}}'
+const VERSIONS_STRING = '{"availableVersions":{"3.0.0.13":"3.0.0.13-1561474922","3.0.0.16":"3.0.0.16-1562079672","3.0.0.4":"3.0.0.4-1560778720","m_3.0.0.2":"m_3.0.0.2-1560873223"}}'
 
 // load the config info sent to the client
 const CONFIG = JSON.parse(fs.readFileSync(path.join('.', 'config.json')).toString()) as Record<string, ConfigValue>
