@@ -122,7 +122,7 @@ const ipAddr = getIp()
 
 const DEBUG_FILE = path.join('.', 'DEBUG')
 const DEBUG = fs.existsSync(DEBUG_FILE)
-const VERSIONS_STRING = '{"availableVersions":{"2.6.0.100094":"2.6.0.100094-1557154926","2.6.0.84905":"2.6.0.84905-1554217487","2.6.0.98545":"2.6.0.98545-1556291021","2.6.0.98763":"2.6.0.98763-1556301195","2.7.0.1":"2.7.0.1-1557939464","3.0.0.13":"3.0.0.13-1561474922","3.0.0.16":"3.0.0.16-1562079672","3.0.0.4":"3.0.0.4-1560778720","m_3.0.0.2":"m_3.0.0.2-1560873223"}}'
+const VERSIONS_STRING = '{"availableVersions":{"3.0.0.13":"3.0.0.13-1561474922","3.0.0.16":"3.0.0.16-1562079672","3.0.0.4":"3.0.0.4-1560778720","m_3.0.0.2":"m_3.0.0.2-1560873223"}}'
 
 // load the config info sent to the client
 const CONFIG = JSON.parse(fs.readFileSync(path.join('.', 'config.json')).toString()) as Record<string, ConfigValue>
@@ -142,7 +142,7 @@ const CATALOG = loadAndEncryptJson(path.join('.', 'json', 'catalog.json'))
 // load contentSchedule.json
 const CONTENT_SCHEDULE = loadAndEncryptJson(path.join('.', 'json', 'contentSchedule.json'))
 // load specialEventsContent.json
-const SPECIAL_EVENTS_CONTENT = getGameEventData()
+let SPECIAL_EVENTS_CONTENT = getGameEventData()
 // load newsContent.json
 const NEWS_CONTENT = loadAndEncryptJson(path.join('.', 'json', 'newsContent.json'))
 
@@ -552,29 +552,29 @@ app.get('/news/newsContent.json', (req, res) => {
 
 app.get('/api/v1/players/me/states/FullProfile/binary', (req, res) => {
     const bhvrSession = req.cookies.bhvrSession as string
-    const session = getSession(bhvrSession)
     if(!isSessionActive(bhvrSession)) {
-        res.status(500).end()
-    } else {
-        if(session.profile) {
-            setApplication(res).send(session.profile)
+        res.status(404).end()
+        return
+    }
+    const session = getSession(bhvrSession)
+    if(session.profile) {
+        setApplication(res).send(session.profile)
+        return
+    }
+    const savePath = path.join('saves', `save_${session.clientIds.userId}`)
+    void saveFileExists(session).then((exists) => {
+        if(!exists) {
+            setApplication(res).status(200).send('')
             return
         }
-        const savePath = path.join('saves', `save_${session.clientIds.userId}`)
-        void saveFileExists(session).then((exists) => {
-            if(!exists) {
+        fs.readFile(savePath, (readErr, data) => {
+            if(readErr) {
                 setApplication(res).status(200).send('')
                 return
             }
-            fs.readFile(savePath, (readErr, data) => {
-                if(readErr) {
-                    setApplication(res).status(200).send('')
-                    return
-                }
-                setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').status(200).send(data)
-            })
+            setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').status(200).send(data)
         })
-    }
+    })
 })
 
 app.post('/api/v1/players/me/states/binary', (req, res) => {
@@ -770,10 +770,15 @@ app.get('/api/v1/config/:key', (req, res) => {
 })
 
 app.post('/api/v1/queue', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     try {
         const body = JSON.parse(req.body) as QueueData
         if(!body.checkOnly) { // new queue
-            queuePlayer(body, getSession(req.cookies.bhvrSession))
+            queuePlayer(body, getSession(bhvrSession))
             sendJson(res, {
                 queueData: {
                     ETA: -10000,
@@ -785,7 +790,7 @@ app.post('/api/v1/queue', (req, res) => {
                 status: 'QUEUED',
             })
         } else {
-            sendJson(res, getQueueStatus(body.side, getSession(req.cookies.bhvrSession)))
+            sendJson(res, getQueueStatus(body.side, getSession(bhvrSession)))
         }
     } catch {
         res.status(500).end()
@@ -793,8 +798,13 @@ app.post('/api/v1/queue', (req, res) => {
 })
 
 app.post('/api/v1/queue/cancel', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     try {
-        removePlayerFromQueue(req.cookies.bhvrSession)
+        removePlayerFromQueue(bhvrSession)
     } catch {
         res.status(500).end()
         return
@@ -803,6 +813,11 @@ app.post('/api/v1/queue/cancel', (req, res) => {
 })
 
 app.post('/api/v1/match/:matchId/register', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     const { matchId } = req.params as { matchId: string }
     let data: { customData: { SessionSettings: string } }
     try {
@@ -820,14 +835,24 @@ app.post('/api/v1/match/:matchId/register', (req, res) => {
 })
 
 app.get('/api/v1/match/:matchId', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     sendJson(res, createMatchResponse(req.params.matchId))
 })
 
 app.put('/api/v1/match/:matchId/:reason', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     const { matchId } = req.params as { matchId: string }
     try {
         const [ lobby ] = getLobbyById(req.params.matchId)
-        if(isOwner(matchId, req.cookies.bhvrSession)) {
+        if(isOwner(matchId, bhvrSession)) {
             lobby.reason = req.params.reason
             sendJson(res, createMatchResponse(matchId, true))
             deleteMatch(req.params.matchId)
@@ -866,6 +891,11 @@ app.get('/banners/featuredPageContent.json', (req, res) => {
 })
 
 app.post('/api/v1/extensions/specialEvents/getEventProgression', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     try {
         const data = JSON.parse(req.body).data as { eventId: GameEvent }
         if(data.eventId === 'Halloween2018') {
@@ -893,6 +923,11 @@ app.post('/api/v1/extensions/specialEvents/getEventProgression', (req, res) => {
 })
 
 app.post('/api/v1/extensions/objectives/getObjectiveProgression', (req, res) => {
+    const bhvrSession = req.cookies.bhvrSession as string
+    if(!isSessionActive(bhvrSession)) {
+        res.status(404).end()
+        return
+    }
     try {
         const data = JSON.parse(req.body).data as { objectiveId: string }
         if(data.objectiveId === 'LunarLantern') {
@@ -946,7 +981,7 @@ function writeSaveToFile(session: Session): Promise<void> {
             if(err) {
                 fs.mkdir(saveDir, (mkdirErr) => {
                     if(mkdirErr) {
-                        reject(err)
+                        reject(mkdirErr)
                         return
                     }
                     write()
@@ -1024,11 +1059,20 @@ const CLI_CMDS: CliCommand[] = [
         command: 'help',
         aliases: [ '?' ],
         description: 'Lists all commands',
-        args: false,
-        run: () => {
+        args: true,
+        run: (args) => {
+            let searchCommand: string
+            if(args && args[0]) {
+                searchCommand = args[0]
+            }
             console.log('\nCommands:')
             for(const cmd of CLI_CMDS) {
-                console.log(cmd.command + (cmd.description ? ` - ${cmd.description}` : ''))
+                if(!searchCommand || searchCommand === cmd.command) {
+                    console.log(cmd.command + (cmd.description ? ` - ${cmd.description}` : ''))
+                    if(cmd.usage) {
+                        console.log('  ' + cmd.usage)
+                    }
+                }
             }
         },
     },
@@ -1085,6 +1129,26 @@ const CLI_CMDS: CliCommand[] = [
         args: false,
         run: () => {
             initShutdown()
+        },
+    },
+    {
+        command: 'events',
+        aliases: [ 'event' ],
+        usage: 'events enable [None|Anniversary2019|Lunar2019|Winter2018|Halloween2018|Summer|Lunar|Winter2017]',
+        description: 'Manages events. Will not affect already active sessions.',
+        args: true,
+        run: (args) => {
+            const validEvents: GameEvent[] = [ 'Winter2017', 'Lunar', 'Summer', 'Halloween2018', 'Winter2018', 'Lunar2019', 'Anniversary2019', 'None' ]
+            if(args[0] !== 'enable') {
+                console.log('Unrecognized argument. Type `help events` for help.')
+                return
+            }
+            if(!validEvents.includes(args[1] as GameEvent)) {
+                console.log('Unrecognized event. Type `help events` for help.')
+                return
+            }
+            SPECIAL_EVENTS_CONTENT = getGameEventData(args[1] as GameEvent)
+            console.log(`Enabled event ${args[1]}`)
         },
     },
 ]

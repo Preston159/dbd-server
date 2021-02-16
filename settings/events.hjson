@@ -1,6 +1,5 @@
 # change one of these to `true` to activate that event
 {
-    "Halloween2017": false,
     "Winter2017": false,
     "Lunar": false,
     "Summer": false,
