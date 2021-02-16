@@ -1140,11 +1140,11 @@ const CLI_CMDS: CliCommand[] = [
         run: (args) => {
             const validEvents: GameEvent[] = [ 'Halloween2017', 'Winter2017', 'Lunar', 'Summer', 'Halloween2018', 'Winter2018', 'Lunar2019', 'Anniversary2019', 'None' ]
             if(args[0] !== 'enable') {
-                console.log('Unrecognized argument. Type `help` for help.')
+                console.log('Unrecognized argument. Type `help events` for help.')
                 return
             }
             if(!validEvents.includes(args[1] as GameEvent)) {
-                console.log('Unrecognized event. Type `help` for help.')
+                console.log('Unrecognized event. Type `help events` for help.')
                 return
             }
             SPECIAL_EVENTS_CONTENT = getGameEventData(args[1] as GameEvent)
