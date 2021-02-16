@@ -185,7 +185,7 @@ export type EventsJson = {
     Anniversary2019: boolean
 }
 
-export type GameEvent = 'Halloween2017' | 'Winter2017' | 'Lunar' | 'Summer' | 'Halloween2018' | 'Winter2018' | 'Lunar2019' | 'Anniversary2019' | 'None'
+export type GameEvent = 'Winter2017' | 'Lunar' | 'Summer' | 'Halloween2018' | 'Winter2018' | 'Lunar2019' | 'Anniversary2019' | 'None'
 
 export type SpecialEventsContent = {
     specialEvents: {

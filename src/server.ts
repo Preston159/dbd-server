@@ -1134,11 +1134,11 @@ const CLI_CMDS: CliCommand[] = [
     {
         command: 'events',
         aliases: [ 'event' ],
-        usage: 'events enable [None|Anniversary2019|Lunar2019|Winter2018|Halloween2018|Summer|Lunar|Winter2017|Halloween2017]',
+        usage: 'events enable [None|Anniversary2019|Lunar2019|Winter2018|Halloween2018|Summer|Lunar|Winter2017]',
         description: 'Manages events. Will not affect already active sessions.',
         args: true,
         run: (args) => {
-            const validEvents: GameEvent[] = [ 'Halloween2017', 'Winter2017', 'Lunar', 'Summer', 'Halloween2018', 'Winter2018', 'Lunar2019', 'Anniversary2019', 'None' ]
+            const validEvents: GameEvent[] = [ 'Winter2017', 'Lunar', 'Summer', 'Halloween2018', 'Winter2018', 'Lunar2019', 'Anniversary2019', 'None' ]
             if(args[0] !== 'enable') {
                 console.log('Unrecognized argument. Type `help events` for help.')
                 return
