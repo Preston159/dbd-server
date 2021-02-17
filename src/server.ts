@@ -39,8 +39,6 @@ console.log(
     )
 //#endregion
 
-checkVersion()
-
 const app = express()
 
 app.disable('trust proxy')
@@ -1243,3 +1241,5 @@ setInterval(() => {
 }, 10 * 60 * 1000)
 
 //#endregion
+
+checkVersion()
