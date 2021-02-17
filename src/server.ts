@@ -564,15 +564,15 @@ app.get('/api/v1/players/me/states/FullProfile/binary', (req, res) => {
     const savePath = path.join('saves', `save_${session.clientIds.userId}`)
     void saveFileExists(session).then((exists) => {
         if(!exists) {
-            setApplication(res).status(200).send('')
+            setApplication(res).send('')
             return
         }
         fs.readFile(savePath, (readErr, data) => {
             if(readErr) {
-                setApplication(res).status(200).send('')
+                setApplication(res).send('')
                 return
             }
-            setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').status(200).send(data)
+            setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').send(data)
         })
     })
 })
