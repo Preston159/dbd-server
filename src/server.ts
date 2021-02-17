@@ -10,7 +10,7 @@ import cookieParser from 'cookie-parser'
 import nunjucks from 'nunjucks'
 import rateLimit from 'express-rate-limit'
 
-import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff, checkCmdMatch } from './util.js'
+import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff, checkCmdMatch, getSavePath } from './util.js'
 import { getIp } from './ipaddr.js'
 import { decryptDbD, decryptSave, encryptDbD } from './saveman.js'
 import idToName from './idtoname.js'
@@ -561,7 +561,7 @@ app.get('/api/v1/players/me/states/FullProfile/binary', (req, res) => {
         setApplication(res).send(session.profile)
         return
     }
-    const savePath = path.join('saves', `save_${session.clientIds.userId}`)
+    const savePath = getSavePath(session.clientIds.userId)
     void saveFileExists(session).then((exists) => {
         if(!exists) {
             setApplication(res).send('')
@@ -613,7 +613,7 @@ app.get('/api/v1/wallet/currencies/BonusBloodpoints', (req, res) => {
         return
     }
     const session = getSession(bhvrSession)
-    const savePath = path.join('saves', `save_${session.clientIds.userId}`)
+    const savePath = getSavePath(session.clientIds.userId)
     fs.stat(savePath, (err) => {
         sendJson(res, {
             userId: session.clientIds.userId,
@@ -966,8 +966,8 @@ function writeSaveToFile(session: Session): Promise<void> {
             resolve()
             return
         }
-        const saveDir = path.join('.', 'saves')
-        const savePath = path.join('.', 'saves', `save_${session.clientIds.userId}`)
+        const saveDir = getSavePath()
+        const savePath = getSavePath(session.clientIds.userId)
         const write = () => {
             fs.writeFile(savePath, session.profile, (err) => {
                 if(err) {
@@ -995,7 +995,7 @@ function writeSaveToFile(session: Session): Promise<void> {
 
 function saveFileExists(session: Session): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
-        const savePath = path.join('.', 'saves', `save_${session.clientIds.userId}`)
+        const savePath = getSavePath(session.clientIds.userId)
         fs.stat(savePath, (err) => {
             if(err) {
                 resolve(false)
