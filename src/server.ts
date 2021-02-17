@@ -1134,7 +1134,7 @@ const CLI_CMDS: CliCommand[] = [
     {
         command: 'events',
         aliases: [ 'event' ],
-        usage: 'events enable [None|Anniversary2019|Lunar2019|Winter2018|Halloween2018|Summer|Lunar|Winter2017]',
+        usage: 'events enable <None|Anniversary2019|Lunar2019|Winter2018|Halloween2018|Summer|Lunar|Winter2017>',
         description: 'Manages events. Will not affect already active sessions.',
         args: true,
         run: (args) => {
