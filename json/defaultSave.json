@@ -9,7 +9,7 @@
     "lastMatchStartTime": "0001-01-01T00:00:00.000Z",
     "lastKillerMatchEndTime": "0001-01-01T00:00:00.000Z",
     "lastSurvivorMatchEndTime": "0001-01-01T00:00:00.000Z",
-    "bonusExperience": 0,
+    "bonusExperience": 0, // this is overwritten by the `bloodpoints` value in `settings/starting-values.hjson`
     "fearTokensMigrated": true,
     "ongoingGameTime": "0001-01-01T00:00:00.000Z",
     "lastSessionTimestamp": "2021.02.18-03.24.25",

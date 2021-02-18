@@ -8,6 +8,7 @@ import * as zlib from 'zlib'
 import * as path from 'path'
 import * as fs from 'fs'
 import v8 from 'v8'
+import HJSON from 'hjson'
 
 import * as StartingValues from './starting-values.js'
 
@@ -17,7 +18,7 @@ const iv = ''
 type SaveData = Record<string, unknown> & { characterData: { key: number }[]; playerUId: string }
 
 const DEFAULT_SAVE_PATH = path.join('.', 'json', 'defaultSave.json')
-const DEFAULT_SAVE = fs.existsSync(DEFAULT_SAVE_PATH) ? JSON.parse(fs.readFileSync(DEFAULT_SAVE_PATH).toString()) : ''
+const DEFAULT_SAVE = fs.existsSync(DEFAULT_SAVE_PATH) ? HJSON.parse(fs.readFileSync(DEFAULT_SAVE_PATH).toString()) : ''
 
 export function decryptDbD(encryptedData: string): Buffer {
     let data: any = encryptedData
