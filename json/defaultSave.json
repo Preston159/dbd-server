@@ -14,9 +14,9 @@
     "bonusExperience": 0, // this is overwritten by the `bloodpoints` value in `settings/starting-values.hjson`
     "fearTokensMigrated": true,
     "ongoingGameTime": "0001-01-01T00:00:00.000Z",
-    "lastSessionTimestamp": "2021.02.18-03.24.25",
-    "cumulativeSessions": 2,
-    "cumulativePlaytime": "1570103568",
+    "lastSessionTimestamp": "0001.01.01-00.00.00",
+    "cumulativeSessions": 1,
+    "cumulativePlaytime": "0",
     "characterData": [
         {
             "key": 0,
@@ -7433,8 +7433,8 @@
         }
     ],
     "dailyRituals": {
-        "lastRitualReceivedDate": "2021-02-18T02:34:32.010Z",
-        "lastRitualPopupDate": "2021-02-18T03:21:56.779Z",
+        "lastRitualReceivedDate": "0001-01-01T00:00:00.000Z",
+        "lastRitualPopupDate": "0001-01-01T00:00:00.000Z",
         "lastRitualDismissedDate": "0001-01-01T00:00:00.000Z",
         "rituals": []
     },
