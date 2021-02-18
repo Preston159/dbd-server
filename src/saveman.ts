@@ -16,7 +16,8 @@ const iv = ''
 
 type SaveData = Record<string, unknown> & { characterData: { key: number }[]; playerUId: string }
 
-const DEFAULT_SAVE = JSON.parse(fs.readFileSync(path.join('.', 'json', 'defaultSave.json')).toString())
+const DEFAULT_SAVE_PATH = path.join('.', 'json', 'defaultSave.json')
+const DEFAULT_SAVE = fs.existsSync(DEFAULT_SAVE_PATH) ? JSON.parse(fs.readFileSync(DEFAULT_SAVE_PATH).toString()) : ''
 
 export function decryptDbD(encryptedData: string): Buffer {
     let data: any = encryptedData
@@ -96,6 +97,9 @@ function appendBuffers(a: Buffer, b: Buffer): Buffer {
 }
 
 export function getDefaultSave(steamId: string): string {
+    if(!DEFAULT_SAVE) {
+        return ''
+    }
     const saveObj = v8.deserialize(v8.serialize(DEFAULT_SAVE)) // deep clone object
     const steam64 = BigInt(steamId)
     const idBuffer = Buffer.alloc(8)
