@@ -1071,6 +1071,33 @@ const CLI_CMDS: CliCommand[] = [
         },
     },
     {
+        command: 'aliases',
+        aliases: [ 'alias' ],
+        description: 'Prints all aliases of a command',
+        args: true,
+        run: (args) => {
+            if(!args || !args[0]) {
+                console.log('Please specify a command')
+                return
+            }
+            const command = args.join(' ')
+            for(const cmd of CLI_CMDS) {
+                if(checkCmdMatch(cmd, command)[0]) {
+                    if(!cmd.aliases) {
+                        console.log(`Command \`${cmd.command}\` has no aliases`)
+                    } else {
+                        console.log(`Aliases of \`${cmd.command}\`:`)
+                        for(const alias of cmd.aliases) {
+                            console.log(`- ${alias}`)
+                        }
+                    }
+                    return
+                }
+            }
+            console.log(`Could not find command \`${command}\``)
+        },
+    },
+    {
         command: 'show warranty',
         aliases: [ 'show w' ],
         description: 'Displays warranty information',
