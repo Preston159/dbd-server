@@ -361,56 +361,63 @@ app.get('/', (req, res) => {
     res.render('index.html')
 })
 
-const checkForUserAndErr: (userId: any, res: Response<any>) => Session = (userId, res) => {
-    if(typeof userId !== 'string') {
-        res.status(400).end()
-        return null
-    }
-    const session = findSessionById(userId)
-    if(!session) {
-        res.status(404).render('error.html', {
-            error: 'A user with that ID could not be found.',
-            linktomain: true,
-        })
-        return null
-    }
-    return session
-}
-
 app.get('/user/:userId', (req, res) => {
-    const session = checkForUserAndErr(req.params.userId, res)
-    if(!session) {
-        return
-    }
-    const profile = session.profile ? decryptSave(session.profile) : null
-    // let name: string
-    if(profile && profile.characterData) {
-        profile.characterData.sort((a, b) => a.key - b.key)
-        // name = Buffer.from(profile.playerUId, 'hex').toString('utf16le')
-    }
-    res.render('user.html', {
-        session,
-        profile,
-        // name,
+    const userId = req.params.userId
+    const session = findSessionById(userId)
+    void saveFileExists(userId).then((exists) => {
+        if(exists) {
+            fs.readFile(getSavePath(userId), (err, data) => {
+                if(!err) {
+                    const profile = decryptSave(data.toString())
+                    res.render('user.html', {
+                        userId,
+                        session,
+                        profile,
+                    })
+                }
+            })
+        } else {
+            res.render('error.html', {
+                error: 'A save file with that user ID could not be found',
+            })
+        }
     })
 })
 
 app.get('/user/:userId/saveData.bin', (req, res) => {
-    const session = checkForUserAndErr(req.params.userId, res)
-    if(!session) {
-        return
-    }
-    setAttachment(res, getLastPartOfId(session.clientIds.userId) + '.bin')
-    sendBinary(res, session.profile ? session.profile : '')
+    const userId = req.params.userId
+    void saveFileExists(userId).then((exists) => {
+        if(exists) {
+            fs.readFile(getSavePath(userId), (err, data) => {
+                if(!err) {
+                    setAttachment(res, getLastPartOfId(userId) + '.bin')
+                    sendBinary(res, data)
+                }
+            })
+        } else {
+            res.render('error.html', {
+                error: 'A save file with that user ID could not be found',
+            })
+        }
+    })
 })
 
 app.get('/user/:userId/saveData.json', (req, res) => {
-    const session = checkForUserAndErr(req.params.userId, res)
-    if(!session) {
-        return
-    }
-    setAttachment(res, getLastPartOfId(session.clientIds.userId) + '.json')
-    sendJson(res, session.profile ? decryptSave(session.profile) : {})
+    const userId = req.params.userId
+    void saveFileExists(userId).then((exists) => {
+        if(exists) {
+            fs.readFile(getSavePath(userId), (err, data) => {
+                if(!err) {
+                    setAttachment(res, getLastPartOfId(userId) + '.json')
+                    sendJson(res, decryptSave(data.toString()))
+                }
+            })
+        } else {
+            res.render('error.html', {
+                error: 'A save file with that user ID could not be found',
+            })
+        }
+    })
 })
 
 app.get('/match/:matchId', (req, res) => {
@@ -556,7 +563,7 @@ app.get('/api/v1/players/me/states/FullProfile/binary', (req, res) => {
     }
     const session = getSession(bhvrSession)
     const savePath = getSavePath(session.clientIds.userId)
-    void saveFileExists(session).then((exists) => {
+    void saveFileExists(session.clientIds.userId).then((exists) => {
         if(!exists) {
             setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').send(getDefaultSave(session.steamId))
             return
@@ -987,9 +994,9 @@ function writeSaveToFile(session: Session): Promise<void> {
     })
 }
 
-function saveFileExists(session: Session): Promise<boolean> {
+function saveFileExists(userId: string): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
-        const savePath = getSavePath(session.clientIds.userId)
+        const savePath = getSavePath(userId)
         fs.stat(savePath, (err) => {
             if(err) {
                 resolve(false)

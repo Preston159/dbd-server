@@ -20,16 +20,12 @@
         </style>
     </head>
     <body>
-        {% if not session %}
-        <span>A user with this ID could not be found. Click <a href="/">here</a> to return to the main page.</span>
-        {% else %}
         <span class="long-text">playerUId: {{ profile.playerUId | spanselectall }}</span><br />
-        <!--<span class="long-text">name: {{ name | spanselectall }}</span><br />-->
-        <span class="long-text">userId: {{ session.clientIds.userId | spanselectall }}</span><br />
+        <span class="long-text">userId: {{ userId | spanselectall }}</span><br />
         <span class="long-text">bhvrSession: {{ session.bhvrSession | spanselectall }}</span><br />
         <span>Download save data:</span>
-        <a href="/user/{{ session.clientIds.userId }}/saveData.bin">Binary (Encrypted)</a>
-        <a href="/user/{{ session.clientIds.userId }}/saveData.json">JSON (Unencrypted)</a>
+        <a href="/user/{{ userId }}/saveData.bin">Binary (Encrypted)</a>
+        <a href="/user/{{ userId }}/saveData.json">JSON (Unencrypted)</a>
         <br />
         <span style="text-decoration: underline;">Save Data</span><br />
         <br />
@@ -94,6 +90,5 @@
         <code>
             {{ profile | dump }}
         </code>
-        {% endif %}
     </body>
 </html>
