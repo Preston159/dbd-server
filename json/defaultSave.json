@@ -1,3 +1,5 @@
+// delete this file to disable the default save entirely
+// if this file doesn't exist, the game will generate a new save file automatically
 {
     "playerUId": "",
     "selectedCamperIndex": 0,
