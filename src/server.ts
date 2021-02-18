@@ -611,7 +611,7 @@ app.get('/api/v1/wallet/currencies/BonusBloodpoints', (req, res) => {
     fs.stat(savePath, (err) => {
         sendJson(res, {
             userId: session.clientIds.userId,
-            balance: defaultSaveExists() ? 0 : StartingValues.bloodpoints,
+            balance: defaultSaveExists() || !err ? 0 : StartingValues.bloodpoints,
             currency: 'BonusBloodpoints',
         })
     })
