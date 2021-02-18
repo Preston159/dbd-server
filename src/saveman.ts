@@ -96,8 +96,12 @@ function appendBuffers(a: Buffer, b: Buffer): Buffer {
     return out
 }
 
+export function defaultSaveExists(): boolean {
+    return !!DEFAULT_SAVE
+}
+
 export function getDefaultSave(steamId: string): string {
-    if(!DEFAULT_SAVE) {
+    if(!defaultSaveExists()) {
         return ''
     }
     const saveObj = v8.deserialize(v8.serialize(DEFAULT_SAVE)) // deep clone object
