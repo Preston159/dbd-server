@@ -5,11 +5,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import * as crypto from 'crypto'
 import * as zlib from 'zlib'
+import * as path from 'path'
+import * as fs from 'fs'
+import v8 from 'v8'
+
+import * as StartingValues from './starting-values.js'
 
 import key from '../private/savekey.js'
 const iv = ''
 
 type SaveData = Record<string, unknown> & { characterData: { key: number }[]; playerUId: string }
+
+const DEFAULT_SAVE = JSON.parse(fs.readFileSync(path.join('.', 'json', 'defaultSave.json')).toString())
 
 export function decryptDbD(encryptedData: string): Buffer {
     let data: any = encryptedData
@@ -86,4 +93,16 @@ function appendBuffers(a: Buffer, b: Buffer): Buffer {
         out[a.length + i] = b[i]
     }
     return out
+}
+
+export function getDefaultSave(steamId: string): string {
+    const saveObj = v8.deserialize(v8.serialize(DEFAULT_SAVE)) // deep clone object
+    const steam64 = BigInt(steamId)
+    const idBuffer = Buffer.alloc(8)
+    idBuffer.writeBigInt64LE(steam64)
+
+    saveObj.playerUid = idBuffer.toString('hex').toUpperCase()
+    saveObj.bonusExperience = StartingValues.bloodpoints
+
+    return encryptDbD(Buffer.from(JSON.stringify(saveObj), 'utf16le'))
 }

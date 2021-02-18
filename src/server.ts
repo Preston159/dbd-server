@@ -12,7 +12,7 @@ import rateLimit from 'express-rate-limit'
 
 import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff, checkCmdMatch, getSavePath } from './util.js'
 import { getIp } from './ipaddr.js'
-import { decryptDbD, decryptSave, encryptDbD } from './saveman.js'
+import { decryptDbD, decryptSave, encryptDbD, getDefaultSave } from './saveman.js'
 import idToName from './idtoname.js'
 import { log, logReq, init as initLogger, logListItem, logListItems, logBlankLine, logError } from './logger.js'
 import { isCdn } from './cdn.js'
@@ -555,14 +555,10 @@ app.get('/api/v1/players/me/states/FullProfile/binary', (req, res) => {
         return
     }
     const session = getSession(bhvrSession)
-    if(session.profile) {
-        setApplication(res).send(session.profile)
-        return
-    }
     const savePath = getSavePath(session.clientIds.userId)
     void saveFileExists(session).then((exists) => {
         if(!exists) {
-            setApplication(res).send('')
+            setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').send(getDefaultSave(session.steamId))
             return
         }
         fs.readFile(savePath, (readErr, data) => {
@@ -615,7 +611,7 @@ app.get('/api/v1/wallet/currencies/BonusBloodpoints', (req, res) => {
     fs.stat(savePath, (err) => {
         sendJson(res, {
             userId: session.clientIds.userId,
-            balance: err ? StartingValues.bloodpoints : 0, // only give starting bp if user has no persistent save
+            balance: 0,
             currency: 'BonusBloodpoints',
         })
     })
