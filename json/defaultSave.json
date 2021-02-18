@@ -700,11 +700,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Empathy",
-                    "Botany_Knowledge",
-                    "Self_Care"
                 ]
             }
         },
@@ -934,11 +929,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Iron_Will",
-                    "Calm_Spirit",
-                    "Saboteur"
                 ]
             }
         },
@@ -1168,11 +1158,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Balanced_Landing",
-                    "Urban_Evasion",
-                    "Streetwise"
                 ]
             }
         },
@@ -1402,11 +1387,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "SoleSurvivor",
-                    "ObjectOfObsession",
-                    "DecisiveStrike"
                 ]
             }
         },
@@ -1636,11 +1616,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Open_Handed",
-                    "Up_The_Ante",
-                    "Ace_In_The_Hole"
                 ]
             }
         },
@@ -1861,11 +1836,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Unnerving_Presence",
-                    "Brutal_Strength",
-                    "Agitation"
                 ]
             }
         },
@@ -2086,11 +2056,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Predator",
-                    "Bloodhound",
-                    "Shadowborn"
                 ]
             }
         },
@@ -2311,11 +2276,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Enduring",
-                    "Lightborn",
-                    "Tinkerer"
                 ]
             }
         },
@@ -2536,11 +2496,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Stridor",
-                    "Thanatophobia",
-                    "NurseCalling"
                 ]
             }
         },
@@ -2761,11 +2716,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Save_The_Best_For_Last",
-                    "Play_With_Your_Food",
-                    "Dying_Light"
                 ]
             }
         },
@@ -2986,11 +2936,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Hex_The_Third_Seal",
-                    "Hex_Ruin",
-                    "Hex_Devour_Hope"
                 ]
             }
         },
@@ -3220,11 +3165,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "FlipFlop",
-                    "BuckleUp",
-                    "TheMettleOfMan"
                 ]
             }
         },
@@ -3445,11 +3385,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "InTheDark",
-                    "BBQAndChilli",
-                    "FranklinsLoss"
                 ]
             }
         },
@@ -3679,11 +3614,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Technician",
-                    "Lithe",
-                    "Alert"
                 ]
             }
         },
@@ -3904,11 +3834,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "OverwhelmingPresence",
-                    "MonitorAndAbuse",
-                    "GeneratorOvercharge"
                 ]
             }
         },
@@ -4129,11 +4054,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "BeastOfPrey",
-                    "TerritorialImperative",
-                    "Hex_HuntressLullaby"
                 ]
             }
         },
@@ -4363,11 +4283,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "WereGonnaLiveForever",
-                    "DeadHard",
-                    "NoMither"
                 ]
             }
         },
@@ -4588,11 +4503,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "FireUp",
-                    "RememberMe",
-                    "BloodWarden"
                 ]
             }
         },
@@ -4822,11 +4732,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Wakeup",
-                    "Pharmacy",
-                    "Vigil"
                 ]
             }
         },
@@ -5047,11 +4952,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "HangmansTrick",
-                    "Surveillance",
-                    "MakeYourChoice"
                 ]
             }
         },
@@ -5281,11 +5181,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Tenacity",
-                    "DetectivesHunch",
-                    "StakeOut"
                 ]
             }
         },
@@ -5506,11 +5401,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Bamboozle",
-                    "Coulrophobia",
-                    "pop_goes_the_weasel"
                 ]
             }
         },
@@ -5740,11 +5630,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Dance_with_me",
-                    "WindowsOfOpportunity",
-                    "BoilOver"
                 ]
             }
         },
@@ -5965,11 +5850,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "SpiritFury",
-                    "Hex_HauntedGround",
-                    "Rancor"
                 ]
             }
         },
@@ -6199,11 +6079,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Diversion",
-                    "Deliverance",
-                    "Autodidact"
                 ]
             }
         },
@@ -6424,11 +6299,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Discordance",
-                    "Madgrit",
-                    "Ironmaiden"
                 ]
             }
         },
@@ -6658,11 +6528,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Breakdown",
-                    "AfterCare",
-                    "Distortion"
                 ]
             }
         },
@@ -6892,11 +6757,6 @@
                     {
                         "i": "HeadOn,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "LeftBehind",
-                    "BorrowedTime",
-                    "SelfSufficient"
                 ]
             }
         },
@@ -7117,11 +6977,6 @@
                     {
                         "i": "SimpleFormula,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "CorruptIntervention",
-                    "InfectiousFright",
-                    "DarkDevotion"
                 ]
             }
         },
@@ -7351,11 +7206,6 @@
                     {
                         "i": "LeftBehind,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "Solidarity",
-                    "Poised",
-                    "HeadOn"
                 ]
             }
         },
@@ -7576,9 +7426,6 @@
                     {
                         "i": "DarkDevotion,3"
                     }
-                ],
-                "uniquePerksAdded": [
-                    "SimpleFormula"
                 ]
             }
         }
