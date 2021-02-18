@@ -36,6 +36,7 @@ export function createSession(now: number, validFor: number, forProvider = false
         guestSession: '',
         totalXp: StartingValues.playerLevelObject.totalXp,
         isSteam: forProvider,
+        steamId: providerId,
     }
     session.guestSession = genGuestSession(session.clientIds.tokenId)
     activeSessions.set(session.bhvrSession, session)

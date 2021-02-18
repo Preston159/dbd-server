@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "dbd-server",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "description": "",
   "main": "server.js",
   "dependencies": {
@@ -29,7 +29,9 @@
     "start": "node build/server.js",
     "build": "tsc",
     "lint": "eslint -c .eslintrc.cjs --ext .ts src/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug_linux": "DEBUG=express:* npm start 2>&1 | tee debug.log",
+    "debug_win": "set DEBUG=express:* && npm start > debug.log 2>&1"
   },
   "author": "Preston Petrie",
   "license": "GPL-3.0-only"

@@ -1,5 +1,6 @@
 import * as crypto from 'crypto'
 import { Response } from 'express'
+import * as path from 'path'
 
 import type { StringPart, PlayerLevel, PlayerLevelInfo, CliCommand } from './types/types'
 
@@ -471,4 +472,12 @@ export function getGameDateString(date: Date): string {
     const month = padNumber(date.getUTCMonth() + 1, 2)
     const day = padNumber(date.getUTCDate(), 2)
     return `${year}-${month}-${day}T00:00:00`
+}
+
+export function getSavePath(userId?: string): string {
+    if(userId) {
+        return path.join('.', 'saves', `save_${userId}`)
+    } else {
+        return path.join('.', 'saves')
+    }
 }

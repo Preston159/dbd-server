@@ -10,9 +10,9 @@ import cookieParser from 'cookie-parser'
 import nunjucks from 'nunjucks'
 import rateLimit from 'express-rate-limit'
 
-import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff, checkCmdMatch } from './util.js'
+import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff, checkCmdMatch, getSavePath } from './util.js'
 import { getIp } from './ipaddr.js'
-import { decryptDbD, decryptSave, encryptDbD } from './saveman.js'
+import { decryptDbD, decryptSave, defaultSaveExists, encryptDbD, getDefaultSave } from './saveman.js'
 import idToName from './idtoname.js'
 import { log, logReq, init as initLogger, logListItem, logListItems, logBlankLine, logError } from './logger.js'
 import { isCdn } from './cdn.js'
@@ -38,8 +38,6 @@ console.log(
     'under certain conditions; see LICENSE file for details.\n\n'
     )
 //#endregion
-
-checkVersion()
 
 const app = express()
 
@@ -557,22 +555,18 @@ app.get('/api/v1/players/me/states/FullProfile/binary', (req, res) => {
         return
     }
     const session = getSession(bhvrSession)
-    if(session.profile) {
-        setApplication(res).send(session.profile)
-        return
-    }
-    const savePath = path.join('saves', `save_${session.clientIds.userId}`)
+    const savePath = getSavePath(session.clientIds.userId)
     void saveFileExists(session).then((exists) => {
         if(!exists) {
-            setApplication(res).status(200).send('')
+            setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').send(getDefaultSave(session.steamId))
             return
         }
         fs.readFile(savePath, (readErr, data) => {
             if(readErr) {
-                setApplication(res).status(200).send('')
+                setApplication(res).send('')
                 return
             }
-            setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').status(200).send(data)
+            setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').send(data)
         })
     })
 })
@@ -613,11 +607,11 @@ app.get('/api/v1/wallet/currencies/BonusBloodpoints', (req, res) => {
         return
     }
     const session = getSession(bhvrSession)
-    const savePath = path.join('saves', `save_${session.clientIds.userId}`)
+    const savePath = getSavePath(session.clientIds.userId)
     fs.stat(savePath, (err) => {
         sendJson(res, {
             userId: session.clientIds.userId,
-            balance: err ? StartingValues.bloodpoints : 0, // only give starting bp if user has no persistent save
+            balance: defaultSaveExists() ? 0 : StartingValues.bloodpoints,
             currency: 'BonusBloodpoints',
         })
     })
@@ -966,8 +960,8 @@ function writeSaveToFile(session: Session): Promise<void> {
             resolve()
             return
         }
-        const saveDir = path.join('.', 'saves')
-        const savePath = path.join('.', 'saves', `save_${session.clientIds.userId}`)
+        const saveDir = getSavePath()
+        const savePath = getSavePath(session.clientIds.userId)
         const write = () => {
             fs.writeFile(savePath, session.profile, (err) => {
                 if(err) {
@@ -995,7 +989,7 @@ function writeSaveToFile(session: Session): Promise<void> {
 
 function saveFileExists(session: Session): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
-        const savePath = path.join('.', 'saves', `save_${session.clientIds.userId}`)
+        const savePath = getSavePath(session.clientIds.userId)
         fs.stat(savePath, (err) => {
             if(err) {
                 resolve(false)
@@ -1134,7 +1128,7 @@ const CLI_CMDS: CliCommand[] = [
     {
         command: 'events',
         aliases: [ 'event' ],
-        usage: 'events enable [None|Anniversary2019|Lunar2019|Winter2018|Halloween2018|Summer|Lunar|Winter2017]',
+        usage: 'events enable <None|Anniversary2019|Lunar2019|Winter2018|Halloween2018|Summer|Lunar|Winter2017>',
         description: 'Manages events. Will not affect already active sessions.',
         args: true,
         run: (args) => {
@@ -1243,3 +1237,5 @@ setInterval(() => {
 }, 10 * 60 * 1000)
 
 //#endregion
+
+checkVersion()
