@@ -7,7 +7,6 @@ import * as crypto from 'crypto'
 import * as zlib from 'zlib'
 import * as path from 'path'
 import * as fs from 'fs'
-import v8 from 'v8'
 import HJSON from 'hjson'
 
 import * as StartingValues from './starting-values.js'
