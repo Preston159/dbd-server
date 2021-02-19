@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+import type { SaveData } from './types/types'
+
 import * as crypto from 'crypto'
 import * as zlib from 'zlib'
 import * as path from 'path'
@@ -14,18 +11,18 @@ import * as StartingValues from './starting-values.js'
 import key from '../private/savekey.js'
 const iv = ''
 
-type SaveData = Record<string, unknown> & { characterData: { key: number }[]; playerUId: string }
-
 const DEFAULT_SAVE_PATH = path.join('.', 'json', 'defaultSave.json')
 const DEFAULT_SAVE = (() => {
     if(fs.existsSync(DEFAULT_SAVE_PATH)) {
-        const saveObj = HJSON.parse(fs.readFileSync(DEFAULT_SAVE_PATH).toString())
+        const saveObj = HJSON.parse(fs.readFileSync(DEFAULT_SAVE_PATH).toString()) as SaveData
         saveObj.bonusExperience = StartingValues.bloodpoints
         return encryptDbD(Buffer.from(JSON.stringify(saveObj), 'utf16le'))
     } else {
         return null
     }
 })()
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 export function decryptDbD(encryptedData: string): Buffer {
     let data: any = encryptedData
@@ -39,12 +36,7 @@ export function decryptDbD(encryptedData: string): Buffer {
     data = Buffer.from(data.toString(), 'base64')
     data = data.slice(4) // is always a 32-bit LE integer denoting the size of the plaintext
     data = zlib.inflateSync(data)
-    return data
-}
-
-export function decryptSave(saveData: string): SaveData {
-    const save = decryptDbD(saveData)
-    return JSON.parse(save.toString('utf16le'))
+    return data as Buffer
 }
 
 export function encryptDbD(plainData: Buffer): string {
@@ -63,8 +55,15 @@ export function encryptDbD(plainData: Buffer): string {
     }
     data = encrypt(data)
     data = data.toString('base64')
-    data = 'DbdDAgAC' + data
-    return data
+    data = 'DbdDAgAC' + (data as string)
+    return data as string
+}
+
+/* eslint-enable @typescript-eslint/no-unsafe-assignment */
+
+export function decryptSave(saveData: string): SaveData {
+    const save = decryptDbD(saveData)
+    return JSON.parse(save.toString('utf16le')) as SaveData
 }
 
 function decrypt(data: Buffer): Buffer {
