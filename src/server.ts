@@ -565,7 +565,7 @@ app.get('/api/v1/players/me/states/FullProfile/binary', (req, res) => {
     const savePath = getSavePath(session.clientIds.userId)
     void saveFileExists(session.clientIds.userId).then((exists) => {
         if(!exists) {
-            setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').send(getDefaultSave(session.steamId))
+            setApplication(res).set('Kraken-State-Version', '1').set('Kraken-State-Schema-Version', '0').send(getDefaultSave())
             return
         }
         fs.readFile(savePath, (readErr, data) => {

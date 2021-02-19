@@ -101,16 +101,12 @@ export function defaultSaveExists(): boolean {
     return !!DEFAULT_SAVE
 }
 
-export function getDefaultSave(steamId: string): string {
+export function getDefaultSave(): string {
     if(!defaultSaveExists()) {
         return ''
     }
     const saveObj = v8.deserialize(v8.serialize(DEFAULT_SAVE)) // deep clone object
-    const steam64 = BigInt(steamId)
-    const idBuffer = Buffer.alloc(8)
-    idBuffer.writeBigInt64LE(steam64)
 
-    saveObj.playerUid = idBuffer.toString('hex').toUpperCase()
     saveObj.bonusExperience = StartingValues.bloodpoints
 
     return encryptDbD(Buffer.from(JSON.stringify(saveObj), 'utf16le'))
