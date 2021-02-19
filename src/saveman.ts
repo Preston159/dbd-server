@@ -18,7 +18,15 @@ const iv = ''
 type SaveData = Record<string, unknown> & { characterData: { key: number }[]; playerUId: string }
 
 const DEFAULT_SAVE_PATH = path.join('.', 'json', 'defaultSave.json')
-const DEFAULT_SAVE = fs.existsSync(DEFAULT_SAVE_PATH) ? HJSON.parse(fs.readFileSync(DEFAULT_SAVE_PATH).toString()) : ''
+const DEFAULT_SAVE = (() => {
+    if(fs.existsSync(DEFAULT_SAVE_PATH)) {
+        const saveObj = HJSON.parse(fs.readFileSync(DEFAULT_SAVE_PATH).toString())
+        saveObj.bonusExperience = StartingValues.bloodpoints
+        return encryptDbD(Buffer.from(JSON.stringify(saveObj), 'utf16le'))
+    } else {
+        return null
+    }
+})()
 
 export function decryptDbD(encryptedData: string): Buffer {
     let data: any = encryptedData
@@ -105,9 +113,5 @@ export function getDefaultSave(): string {
     if(!defaultSaveExists()) {
         return ''
     }
-    const saveObj = v8.deserialize(v8.serialize(DEFAULT_SAVE)) // deep clone object
-
-    saveObj.bonusExperience = StartingValues.bloodpoints
-
-    return encryptDbD(Buffer.from(JSON.stringify(saveObj), 'utf16le'))
+    return DEFAULT_SAVE
 }
