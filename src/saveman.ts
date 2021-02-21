@@ -11,7 +11,9 @@ import * as StartingValues from './starting-values.js'
 import key from '../private/savekey.js'
 const iv = ''
 
+// the path of the default save
 const DEFAULT_SAVE_PATH = path.join('.', 'json', 'defaultSave.json')
+// load the default save and encrypt it
 const DEFAULT_SAVE = (() => {
     if(fs.existsSync(DEFAULT_SAVE_PATH)) {
         const saveObj = HJSON.parse(fs.readFileSync(DEFAULT_SAVE_PATH).toString()) as SaveData
@@ -24,6 +26,10 @@ const DEFAULT_SAVE = (() => {
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
+/**
+ * Decrypts data using BHVR's encryption method.
+ * @param encryptedData the encrypted data
+ */
 export function decryptDbD(encryptedData: string): Buffer {
     let data: any = encryptedData
     data = data.substr(8) // is always DbdDAgAC
@@ -39,6 +45,10 @@ export function decryptDbD(encryptedData: string): Buffer {
     return data as Buffer
 }
 
+/**
+ * Encrypts the data using BHVR's encrypted method.
+ * @param plainData the Buffer containing the data to be encrypted; should be UTF-16LE encoded
+ */
 export function encryptDbD(plainData: Buffer): string {
     let data: any = plainData
 
@@ -61,11 +71,18 @@ export function encryptDbD(plainData: Buffer): string {
 
 /* eslint-enable @typescript-eslint/no-unsafe-assignment */
 
+/**
+ * Converts an encrypted player save to an Object.
+ * @param saveData the encrypted save data
+ */
 export function decryptSave(saveData: string): SaveData {
     const save = decryptDbD(saveData)
     return JSON.parse(save.toString('utf16le')) as SaveData
 }
 
+/**
+ * Performs the AES decryption for decryptDbD()
+ */
 function decrypt(data: Buffer): Buffer {
     const cipher = crypto.createDecipheriv('aes-256-ecb', key, iv)
     cipher.setAutoPadding(false)
@@ -84,6 +101,9 @@ function decrypt(data: Buffer): Buffer {
     return outBuffer
 }
 
+/**
+ * Performs the AES encryption for encryptDbD()
+ */
 function encrypt(data: Buffer): Buffer {
     const cipher = crypto.createCipheriv('aes-256-ecb', key, iv)
     cipher.setAutoPadding(false)
@@ -92,6 +112,11 @@ function encrypt(data: Buffer): Buffer {
     return appendBuffers(cipher.update(data), cipher.final())
 }
 
+/**
+ * Concatenates two Buffers.
+ * @param a the first Buffer
+ * @param b the second Buffer
+ */
 function appendBuffers(a: Buffer, b: Buffer): Buffer {
     const out = Buffer.alloc(a.length + b.length)
     for(let i = 0;i < a.length;i++) {
@@ -103,10 +128,16 @@ function appendBuffers(a: Buffer, b: Buffer): Buffer {
     return out
 }
 
+/**
+ * Returns `true` if the default save file exists, `false` otherwise.
+ */
 export function defaultSaveExists(): boolean {
     return !!DEFAULT_SAVE
 }
 
+/**
+ * Returns the encrypted default save.
+ */
 export function getDefaultSave(): string {
     if(!defaultSaveExists()) {
         return ''

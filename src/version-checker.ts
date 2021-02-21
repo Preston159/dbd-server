@@ -7,6 +7,9 @@ import * as fs from 'fs'
 const VERSION_REGEX = /^v?(?<major>[0-9]+)\.(?<minor>[0-9]+)\.(?<patch>[0-9]+)$/
 const RELEASES_URL = 'https://api.github.com/repos/Preston159/dbd-server/tags'
 
+/**
+ * Checks for available updates and notifies the user.
+ */
 export function checkVersion(): void {
     const packageJson = JSON.parse(fs.readFileSync(path.join('.', 'package.json')).toString()) as PackageJson
     const verRunning = packageJson.version
@@ -32,7 +35,13 @@ export function checkVersion(): void {
         })
 }
 
-function compareVersions(a: string, b: string) {
+/**
+ * Compares two SemVers.
+ * @param a the first version
+ * @param b the second version
+ * @returns -1 if a < b, 1 if a > b, or 0 if a = b
+ */
+function compareVersions(a: string, b: string): number {
     const matchA = VERSION_REGEX.exec(a)
     const matchB = VERSION_REGEX.exec(b)
     if(!matchA) {

@@ -1,11 +1,15 @@
 import type { KilledLobby, Lobby, QueueData, QueuedPlayer, Session, Side } from './types/types'
 import { genMatchUUID } from './util.js'
 
-
 const openLobbies: Lobby[] = []
 const killedLobbies: KilledLobby[] = []
 const queuedPlayers: QueuedPlayer[] = []
 
+/**
+ * Places a player into the matchmaking queue.
+ * @param queueData the player's queue data
+ * @param session   the player's Session
+ */
 export function queuePlayer(queueData: QueueData, session: Session): void {
     queuedPlayers.push({
         bhvrSession: session.bhvrSession,
@@ -15,6 +19,11 @@ export function queuePlayer(queueData: QueueData, session: Session): void {
     })
 }
 
+/**
+ * Finds a queued player by their bhvrSession.
+ * @param bhvrSession the player's bhvrSession
+ * @returns a tuple [ QueuedPlayer, number ] where [0] is the relevant QueuedPlayer object (or null) and [1] is the index in queuedPlayers (or -1)
+ */
 export function getQueuedPlayer(bhvrSession: string): [ QueuedPlayer, number ] {
     for(let i = 0;i < queuedPlayers.length;i++) {
         if(queuedPlayers[i].bhvrSession === bhvrSession) {
@@ -24,6 +33,11 @@ export function getQueuedPlayer(bhvrSession: string): [ QueuedPlayer, number ] {
     return [ null, -1 ]
 }
 
+/**
+ * Gets a player's queue status to be sent to the client
+ * @param side      'A' if killer or 'B' if survivor
+ * @param session   the player's Session
+ */
 export function getQueueStatus(side: Side, session: Session): Record<string, unknown> {
     const [ queuedPlayer, index ] = getQueuedPlayer(session.bhvrSession)
     if(queuedPlayer === null) {
@@ -66,6 +80,10 @@ export function getQueueStatus(side: Side, session: Session): Record<string, unk
     }
 }
 
+/**
+ * Removes the specified player from the matchmaking queue.
+ * @param bhvrSession the player's bhvrSession
+ */
 export function removePlayerFromQueue(bhvrSession: string): void {
     const [ queuedPlayer, index ] = getQueuedPlayer(bhvrSession)
     if(queuedPlayer === null) {
@@ -74,6 +92,11 @@ export function removePlayerFromQueue(bhvrSession: string): void {
     queuedPlayers.splice(index, 1)
 }
 
+/**
+ * Finds a lobby by its ID.
+ * @param id the ID of the lobby
+ * @returns a tuple [ Lobby, number ] where [0] is the Lobby (or null) and [1] is the Lobby's index in openLobbies (or -1)
+ */
 export function getLobbyById(id: string): [ Lobby, number ] {
     for(let i = 0;i < openLobbies.length;i++) {
         if(openLobbies[i].id === id) {
@@ -83,6 +106,10 @@ export function getLobbyById(id: string): [ Lobby, number ] {
     return [ null, -1 ]
 }
 
+/**
+ * Finds and returns a killed lobby by its ID.
+ * @param id the ID of the lobby
+ */
 export function getKilledLobbyById(id: string): KilledLobby {
     for(const killedLobby of killedLobbies) {
         if(killedLobby.id === id) {
@@ -92,6 +119,11 @@ export function getKilledLobbyById(id: string): KilledLobby {
     return null
 }
 
+/**
+ * Registers a match and marks it ready.
+ * @param matchId           the ID of the match
+ * @param sessionSettings   the SessionSettings sent by the host client
+ */
 export function registerMatch(matchId: string, sessionSettings: string): Record<string, unknown> {
     const [ lobby ] = getLobbyById(matchId)
     if(lobby === null) {
@@ -102,6 +134,10 @@ export function registerMatch(matchId: string, sessionSettings: string): Record<
     return createMatchResponse(matchId)
 }
 
+/**
+ * Removes the specified match from openLobbies and moves it to killedLobbies.
+ * @param matchId the match ID
+ */
 export function deleteMatch(matchId: string): void {
     const [ lobby, index ] = getLobbyById(matchId)
     if(lobby === null) {
@@ -112,11 +148,19 @@ export function deleteMatch(matchId: string): void {
     killedLobbies.push(killedLobby)
 }
 
+/**
+ * Returns `true` if the specified player is the host of the given match, `false` otherwise.
+ * @param matchId       the match ID
+ * @param bhvrSession   the player's bhvrSession
+ */
 export function isOwner(matchId: string, bhvrSession: string): boolean {
     const [ lobby ] = getLobbyById(matchId)
     return lobby && lobby.host.bhvrSession === bhvrSession
 }
 
+/**
+ * Deletes all Killed Lobbies which were killed more than 5 minutes ago.
+ */
 export function deleteOldMatches(): void {
     console.log('Deleting old matches')
     for(let i = killedLobbies.length - 1;i >= 0;i--) {
@@ -126,6 +170,11 @@ export function deleteOldMatches(): void {
     }
 }
 
+/**
+ * Creates a match response to be sent to the client.
+ * @param matchId   the match ID
+ * @param killed    whether or not the match has been killed
+ */
 export function createMatchResponse(matchId: string, killed = false): Record<string, unknown> {
     let [ lobby ] = getLobbyById(matchId)
     if(lobby === null) {
@@ -179,6 +228,12 @@ export function createMatchResponse(matchId: string, killed = false): Record<str
     }
 }
 
+/**
+ * Creates a queue response to be sent to the client.
+ * @param creatorId the host's ID
+ * @param matchId   the match ID
+ * @param joinerId  the joiner's ID
+ */
 function createQueueResponseMatched(creatorId: string, matchId: string, joinerId?: string): { status: string; matchData: any } {
     return {
         status: 'MATCHED',

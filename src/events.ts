@@ -7,8 +7,13 @@ import HJSON from 'hjson'
 import { encryptDbD } from './saveman.js'
 import { getGameDateString } from './util.js'
 
+// load event config data
 const events = HJSON.parse(fs.readFileSync(path.join('.', 'settings', 'events.hjson')).toString()) as EventsJson
 
+/**
+ * Returns the encrypted event data which should be sent to the client.
+ * @param event if specified, the event to enable; otherwise, the config file is used
+ */
 export function getGameEventData(event?: GameEvent): string {
     const eventData = JSON.parse(fs.readFileSync(path.join('.', 'json', 'specialEventsContent.json')).toString()) as SpecialEventsContent
     const now = new Date()
