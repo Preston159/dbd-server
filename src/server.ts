@@ -22,7 +22,7 @@ import debugResponse, { setResponse, unsetResponse } from './debug-response.js'
 import * as connectionTracker from './connection-tracker.js'
 import respondEmpty, { addAutoResponses } from './respond-empty.js'
 import { getSteamIdFromToken } from './steam-manager.js'
-import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray, getActiveSessionCount, removeExpiredSessions } from './session-manager.js'
+import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray, getActiveSessionCount, removeExpiredSessions, clearFakeSessions } from './session-manager.js'
 import * as StartingValues from './starting-values.js'
 import { DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
 import { checkVersion } from './version-checker.js'
@@ -244,7 +244,7 @@ if(DEBUG) {
                 sendJson(res, session)
                 return
             case DebugCommand.CLEAR_FAKE_SESSIONS:
-                createFakeSession()
+                clearFakeSessions()
                 output.push('Done')
                 break
             case DebugCommand.RELOAD_WHITELIST:
