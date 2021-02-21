@@ -1233,9 +1233,7 @@ if(DEBUG) {
             },
         },
     ]
-    for(const cmd of DEBUG_CMDS) {
-        CLI_CMDS.push(cmd)
-    }
+    CLI_CMDS.push(...DEBUG_CMDS)
 }
 
 process.stdin.setEncoding('utf8')
