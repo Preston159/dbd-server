@@ -1,3 +1,10 @@
+/*
+ * This code is licensed for use under GPLv3.0. It is not in the public domain.
+ * Copyright (C) Preston Petrie 2021
+ */
+/**
+ * @module Failure Logger
+ */
 import { Request, Response, NextFunction } from 'express'
 
 import { logFailedRequest } from './logger.js'

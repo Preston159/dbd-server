@@ -1,3 +1,10 @@
+/*
+ * This code is licensed for use under GPLv3.0. It is not in the public domain.
+ * Copyright (C) Preston Petrie 2021
+ */
+/**
+ * @module Logger
+ */
 import type { LoggerOptions, FileParts, RequestType } from './types/types'
 
 import type { Request } from 'express'

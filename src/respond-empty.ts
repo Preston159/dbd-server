@@ -1,3 +1,10 @@
+/*
+ * This code is licensed for use under GPLv3.0. It is not in the public domain.
+ * Copyright (C) Preston Petrie 2021
+ */
+/**
+ * @module Respond Empty
+ */
 import type { RequestMethod } from './types/types'
 
 import { Request, Response, NextFunction } from 'express'

@@ -1,3 +1,10 @@
+/*
+ * This code is licensed for use under GPLv3.0. It is not in the public domain.
+ * Copyright (C) Preston Petrie 2021
+ */
+/**
+ * @module Save Manager
+ */
 import type { SaveData } from './types/types'
 
 import * as crypto from 'crypto'

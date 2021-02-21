@@ -1,3 +1,10 @@
+/*
+ * This code is licensed for use under GPLv3.0. It is not in the public domain.
+ * Copyright (C) Preston Petrie 2021
+ */
+/**
+ * @module Matchmaking
+ */
 import type { KilledLobby, Lobby, QueueData, QueuedPlayer, Session, Side } from './types/types'
 import { genMatchUUID } from './util.js'
 

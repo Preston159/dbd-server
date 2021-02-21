@@ -1,4 +1,10 @@
-
+/*
+ * This code is licensed for use under GPLv3.0. It is not in the public domain.
+ * Copyright (C) Preston Petrie 2021
+ */
+/**
+ * @module Nunjucks Filters
+ */
 export const makeSpacesNonBreaking: (str: string) => string = (str: string) => str.replace(/ /g, '&nbsp;')
 export const repeatString: (str: string, count: number) => string = (str: string, count: number) => str.repeat(count)
 export const newlineToBr: (str: string) => string = (str: string) => str.replace(/\r?\n/g, '<br />')
