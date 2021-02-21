@@ -1229,7 +1229,7 @@ if(DEBUG) {
             command: 'eval',
             args: true,
             run: (args) => {
-                eval(args.join(' ')) // eslint-disable-line no-eval
+                console.log(eval(args.join(' '))) // eslint-disable-line no-eval
             },
         },
     ]
