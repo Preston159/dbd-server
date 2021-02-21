@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "dbd-server",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "",
   "main": "server.js",
   "dependencies": {
@@ -22,16 +22,20 @@
   "devDependencies": {
     "@types/express": "^4.17.7",
     "@types/node": "^14.0.27",
-    "@types/node-fetch": "^2.5.8"
+    "@types/node-fetch": "^2.5.8",
+    "mocha": "^8.3.0",
+    "request": "^2.88.2",
+    "typedoc": "^0.20.27"
   },
   "scripts": {
     "prestart": "npm-run-all --serial build",
     "start": "node build/server.js",
     "build": "tsc",
     "lint": "eslint -c .eslintrc.cjs --ext .ts src/",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha test/test.js",
     "debug_linux": "DEBUG=express:* npm start 2>&1 | tee debug.log",
-    "debug_win": "set DEBUG=express:* && npm start > debug.log 2>&1"
+    "debug_win": "set DEBUG=express:* && npm start > debug.log 2>&1",
+    "gen-docs": "npx typedoc --name \"DbD Dev Server\" --includeVersion --readme none src/"
   },
   "author": "Preston Petrie",
   "license": "GPL-3.0-only"

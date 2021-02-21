@@ -11,6 +11,7 @@
     "lastMatchStartTime": "0001-01-01T00:00:00.000Z",
     "lastKillerMatchEndTime": "0001-01-01T00:00:00.000Z",
     "lastSurvivorMatchEndTime": "0001-01-01T00:00:00.000Z",
+    "experience": 0, // regular bloodpoints; can't go over 1,000,000
     "bonusExperience": 0, // this is overwritten by the `bloodpoints` value in `settings/starting-values.hjson`
     "fearTokensMigrated": true,
     "ongoingGameTime": "0001-01-01T00:00:00.000Z",

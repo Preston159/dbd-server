@@ -1,4 +1,10 @@
-
+/*
+ * This code is licensed for use under GPLv3.0. It is not in the public domain.
+ * Copyright (C) Preston Petrie 2021
+ */
+/**
+ * @module ID To Name
+ */
 const names: Map<string, string> = new Map<string, string>()
 
 names.set("0", "Dwight")

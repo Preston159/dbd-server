@@ -1,3 +1,10 @@
+/*
+ * This code is licensed for use under GPLv3.0. It is not in the public domain.
+ * Copyright (C) Preston Petrie 2021
+ */
+/**
+ * @module Util
+ */
 import * as crypto from 'crypto'
 import { Response } from 'express'
 import * as path from 'path'
@@ -467,6 +474,11 @@ export function checkCmdMatch(cmd: CliCommand, input: string): [ boolean, string
     return [ false, null ]
 }
 
+/**
+ * Converts a Date object to the format expected by the game.<br>
+ * Note: This function uses only the date and ignores the time.
+ * @param date the Date object to convert
+ */
 export function getGameDateString(date: Date): string {
     const year = date.getUTCFullYear().toString()
     const month = padNumber(date.getUTCMonth() + 1, 2)
@@ -474,6 +486,10 @@ export function getGameDateString(date: Date): string {
     return `${year}-${month}-${day}T00:00:00`
 }
 
+/**
+ * Returns the path where save files are stored, or the path for a specific user's save if `userId` is specified.
+ * @param userId the user ID
+ */
 export function getSavePath(userId?: string): string {
     if(userId) {
         return path.join('.', 'saves', `save_${userId}`)

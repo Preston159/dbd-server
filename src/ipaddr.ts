@@ -1,3 +1,10 @@
+/*
+ * This code is licensed for use under GPLv3.0. It is not in the public domain.
+ * Copyright (C) Preston Petrie 2021
+ */
+/**
+ * @module IP Address
+ */
 import { networkInterfaces } from 'os'
 
 import { isPublicIpv4 } from './util.js'

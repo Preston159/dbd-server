@@ -1,13 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+/*
+ * This code is licensed for use under GPLv3.0. It is not in the public domain.
+ * Copyright (C) Preston Petrie 2021
+ */
+/**
+ * @module Save Manager
+ */
+import type { SaveData } from './types/types'
+
 import * as crypto from 'crypto'
 import * as zlib from 'zlib'
 import * as path from 'path'
 import * as fs from 'fs'
-import v8 from 'v8'
 import HJSON from 'hjson'
 
 import * as StartingValues from './starting-values.js'
@@ -15,11 +18,25 @@ import * as StartingValues from './starting-values.js'
 import key from '../private/savekey.js'
 const iv = ''
 
-type SaveData = Record<string, unknown> & { characterData: { key: number }[]; playerUId: string }
-
+// the path of the default save
 const DEFAULT_SAVE_PATH = path.join('.', 'json', 'defaultSave.json')
-const DEFAULT_SAVE = fs.existsSync(DEFAULT_SAVE_PATH) ? HJSON.parse(fs.readFileSync(DEFAULT_SAVE_PATH).toString()) : ''
+// load the default save and encrypt it
+const DEFAULT_SAVE = (() => {
+    if(fs.existsSync(DEFAULT_SAVE_PATH)) {
+        const saveObj = HJSON.parse(fs.readFileSync(DEFAULT_SAVE_PATH).toString()) as SaveData
+        saveObj.bonusExperience = StartingValues.bloodpoints
+        return encryptDbD(Buffer.from(JSON.stringify(saveObj), 'utf16le'))
+    } else {
+        return null
+    }
+})()
 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+/**
+ * Decrypts data using BHVR's encryption method.
+ * @param encryptedData the encrypted data
+ */
 export function decryptDbD(encryptedData: string): Buffer {
     let data: any = encryptedData
     data = data.substr(8) // is always DbdDAgAC
@@ -32,14 +49,13 @@ export function decryptDbD(encryptedData: string): Buffer {
     data = Buffer.from(data.toString(), 'base64')
     data = data.slice(4) // is always a 32-bit LE integer denoting the size of the plaintext
     data = zlib.inflateSync(data)
-    return data
+    return data as Buffer
 }
 
-export function decryptSave(saveData: string): SaveData {
-    const save = decryptDbD(saveData)
-    return JSON.parse(save.toString('utf16le'))
-}
-
+/**
+ * Encrypts the data using BHVR's encrypted method.
+ * @param plainData the Buffer containing the data to be encrypted; should be UTF-16LE encoded
+ */
 export function encryptDbD(plainData: Buffer): string {
     let data: any = plainData
 
@@ -56,10 +72,24 @@ export function encryptDbD(plainData: Buffer): string {
     }
     data = encrypt(data)
     data = data.toString('base64')
-    data = 'DbdDAgAC' + data
-    return data
+    data = 'DbdDAgAC' + (data as string)
+    return data as string
 }
 
+/* eslint-enable @typescript-eslint/no-unsafe-assignment */
+
+/**
+ * Converts an encrypted player save to an Object.
+ * @param saveData the encrypted save data
+ */
+export function decryptSave(saveData: string): SaveData {
+    const save = decryptDbD(saveData)
+    return JSON.parse(save.toString('utf16le')) as SaveData
+}
+
+/**
+ * Performs the AES decryption for decryptDbD()
+ */
 function decrypt(data: Buffer): Buffer {
     const cipher = crypto.createDecipheriv('aes-256-ecb', key, iv)
     cipher.setAutoPadding(false)
@@ -78,6 +108,9 @@ function decrypt(data: Buffer): Buffer {
     return outBuffer
 }
 
+/**
+ * Performs the AES encryption for encryptDbD()
+ */
 function encrypt(data: Buffer): Buffer {
     const cipher = crypto.createCipheriv('aes-256-ecb', key, iv)
     cipher.setAutoPadding(false)
@@ -86,6 +119,11 @@ function encrypt(data: Buffer): Buffer {
     return appendBuffers(cipher.update(data), cipher.final())
 }
 
+/**
+ * Concatenates two Buffers.
+ * @param a the first Buffer
+ * @param b the second Buffer
+ */
 function appendBuffers(a: Buffer, b: Buffer): Buffer {
     const out = Buffer.alloc(a.length + b.length)
     for(let i = 0;i < a.length;i++) {
@@ -97,21 +135,19 @@ function appendBuffers(a: Buffer, b: Buffer): Buffer {
     return out
 }
 
+/**
+ * Returns `true` if the default save file exists, `false` otherwise.
+ */
 export function defaultSaveExists(): boolean {
     return !!DEFAULT_SAVE
 }
 
-export function getDefaultSave(steamId: string): string {
+/**
+ * Returns the encrypted default save.
+ */
+export function getDefaultSave(): string {
     if(!defaultSaveExists()) {
         return ''
     }
-    const saveObj = v8.deserialize(v8.serialize(DEFAULT_SAVE)) // deep clone object
-    const steam64 = BigInt(steamId)
-    const idBuffer = Buffer.alloc(8)
-    idBuffer.writeBigInt64LE(steam64)
-
-    saveObj.playerUid = idBuffer.toString('hex').toUpperCase()
-    saveObj.bonusExperience = StartingValues.bloodpoints
-
-    return encryptDbD(Buffer.from(JSON.stringify(saveObj), 'utf16le'))
+    return DEFAULT_SAVE
 }

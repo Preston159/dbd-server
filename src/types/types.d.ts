@@ -1,3 +1,11 @@
+/*
+ * This code is licensed for use under GPLv3.0. It is not in the public domain.
+ * Copyright (C) Preston Petrie 2021
+ */
+/**
+ * @module Types
+ */
+
 //#region game
 
 export type ClientIds = {
@@ -195,4 +203,11 @@ export type SpecialEventsContent = {
         postEndTime: string
         startTime: string
     }[]
+}
+
+export type SaveData = Record<string, unknown> & {
+    characterData: { key: number }[]
+    playerUId: string
+    experience: number
+    bonusExperience: number
 }
