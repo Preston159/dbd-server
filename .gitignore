@@ -1,6 +1,7 @@
 .vscode/
 build/
 commands/
+docs/
 encryption/
 examples/
 logs/

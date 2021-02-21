@@ -24,7 +24,8 @@
     "@types/node": "^14.0.27",
     "@types/node-fetch": "^2.5.8",
     "mocha": "^8.3.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "typedoc": "^0.20.27"
   },
   "scripts": {
     "prestart": "npm-run-all --serial build",
@@ -33,7 +34,8 @@
     "lint": "eslint -c .eslintrc.cjs --ext .ts src/",
     "test": "mocha test/test.js",
     "debug_linux": "DEBUG=express:* npm start 2>&1 | tee debug.log",
-    "debug_win": "set DEBUG=express:* && npm start > debug.log 2>&1"
+    "debug_win": "set DEBUG=express:* && npm start > debug.log 2>&1",
+    "gen-docs": "npx typedoc src/"
   },
   "author": "Preston Petrie",
   "license": "GPL-3.0-only"
