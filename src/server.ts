@@ -846,6 +846,10 @@ app.post('/api/v1/match/:matchId/register', (req, res) => {
     sendJson(res, response)
 })
 
+app.get('/api/v1/match', (req, res) => {
+    sendJson(res, createMatchResponse(''))
+})
+
 app.get('/api/v1/match/:matchId', (req, res) => {
     const bhvrSession = req.cookies.bhvrSession as string
     if(!isSessionActive(bhvrSession)) {
