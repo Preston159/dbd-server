@@ -485,15 +485,3 @@ export function getGameDateString(date: Date): string {
     const day = padNumber(date.getUTCDate(), 2)
     return `${year}-${month}-${day}T00:00:00`
 }
-
-/**
- * Returns the path where save files are stored, or the path for a specific user's save if `userId` is specified.
- * @param userId the user ID
- */
-export function getSavePath(userId?: string): string {
-    if(userId) {
-        return path.join('.', 'saves', `save_${userId}`)
-    } else {
-        return path.join('.', 'saves')
-    }
-}

@@ -17,9 +17,9 @@ import cookieParser from 'cookie-parser'
 import nunjucks from 'nunjucks'
 import rateLimit from 'express-rate-limit'
 
-import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff, checkCmdMatch, getSavePath } from './util.js'
+import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff, checkCmdMatch } from './util.js'
 import { getIp } from './ipaddr.js'
-import { decryptDbD, decryptSave, defaultSaveExists, encryptDbD, getDefaultSave } from './saveman.js'
+import { decryptDbD, decryptSave, defaultSaveExists, encryptDbD, getDefaultSave, getSavePath, saveFileExists } from './saveman.js'
 import idToName from './idtoname.js'
 import { log, logReq, init as initLogger, logListItem, logListItems, logBlankLine, logError } from './logger.js'
 import { isCdn } from './cdn.js'
@@ -1005,20 +1005,6 @@ function writeSaveToFile(session: Session): Promise<void> {
             } else {
                 write()
             }
-        })
-    })
-}
-
-function saveFileExists(userId: string): Promise<boolean> {
-    return new Promise<boolean>((resolve) => {
-        const savePath = getSavePath(userId)
-        fs.stat(savePath, (err) => {
-            if(err) {
-                resolve(false)
-                return
-            }
-            resolve(true)
-            return
         })
     })
 }

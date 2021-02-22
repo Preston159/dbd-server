@@ -151,3 +151,29 @@ export function getDefaultSave(): string {
     }
     return DEFAULT_SAVE
 }
+
+/**
+ * Returns the path where save files are stored, or the path for a specific user's save if `userId` is specified.
+ * @param userId the user ID
+ */
+export function getSavePath(userId?: string): string {
+    if(userId) {
+        return path.join('.', 'saves', `save_${userId}`)
+    } else {
+        return path.join('.', 'saves')
+    }
+}
+
+export function saveFileExists(userId: string): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+        const savePath = getSavePath(userId)
+        fs.stat(savePath, (err) => {
+            if(err) {
+                resolve(false)
+                return
+            }
+            resolve(true)
+            return
+        })
+    })
+}
