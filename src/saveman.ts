@@ -177,3 +177,49 @@ export function saveFileExists(userId: string): Promise<boolean> {
         })
     })
 }
+
+export function setPlayerPerkLevel(userId: string, characterId: number, perkId: string, level: number): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+        void saveFileExists(userId).then((exists) => {
+            if(!exists) {
+                resolve(false)
+                return
+            }
+            const savePath = getSavePath(userId)
+            fs.readFile(savePath, { encoding: 'utf8' }, (err, data) => {
+                if(err) {
+                    reject(err)
+                    return
+                }
+                const save = decryptSave(data)
+                let found = false
+                for(const character of save.characterData) {
+                    if(character.key === characterId) {
+                        for(const item of character.data.inventory) {
+                            const [ perkName ] = item.i.split(',')
+                            if(perkName === perkId) {
+                                item.i = `${perkName},${level}`
+                                found = true
+                                break
+                            }
+                        }
+                        break
+                    }
+                }
+                if(found) {
+                    const encryptedSave = encryptDbD(Buffer.from(JSON.stringify(save), 'utf16le'))
+                    fs.writeFile(savePath, encryptedSave, (writeErr) => {
+                        if(writeErr) {
+                            reject(writeErr)
+                            return
+                        }
+                        resolve(true)
+                        return
+                    })
+                } else {
+                    resolve(false)
+                }
+            })
+        })
+    })
+}

@@ -7,7 +7,6 @@
  */
 import * as crypto from 'crypto'
 import { Response } from 'express'
-import * as path from 'path'
 
 import type { StringPart, PlayerLevel, PlayerLevelInfo, CliCommand } from './types/types'
 

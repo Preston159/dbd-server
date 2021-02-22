@@ -206,8 +206,15 @@ export type SpecialEventsContent = {
 }
 
 export type SaveData = Record<string, unknown> & {
-    characterData: { key: number }[]
     playerUId: string
     experience: number
     bonusExperience: number
+    characterData: {
+        key: number
+        data: {
+            inventory: {
+                i: string
+            }[]
+        }
+    }[]
 }
