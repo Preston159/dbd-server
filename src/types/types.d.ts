@@ -184,6 +184,7 @@ export type ServerSettingsJson = {
 }
 
 export type EventsJson = {
+    length: number
     Halloween2017: boolean
     Winter2017: boolean
     Lunar: boolean

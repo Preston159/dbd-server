@@ -1,5 +1,7 @@
 # change one of these to `true` to activate that event
 {
+    # the duration of events (in days)
+    "length": 180,
     "Winter2017": false,
     "Lunar": false,
     "Summer": false,
