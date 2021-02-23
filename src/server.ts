@@ -28,10 +28,10 @@ import * as filters from './nunjucks-filters.js'
 import debugResponse, { setResponse, unsetResponse } from './debug-response.js'
 import * as connectionTracker from './connection-tracker.js'
 import respondEmpty, { addAutoResponses } from './respond-empty.js'
-import { getSteamIdFromToken } from './steam-manager.js'
+import { getSteamIdFromToken, verifyGameId } from './steam-manager.js'
 import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray, getActiveSessionCount, removeExpiredSessions, clearFakeSessions } from './session-manager.js'
 import * as StartingValues from './starting-values.js'
-import { DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
+import { CHECK_STEAM_GAME_ID, DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
 import { checkVersion } from './version-checker.js'
 import { loadAndEncryptJson } from './jsonman.js'
 import { getGameEventData } from './events.js'
@@ -480,8 +480,13 @@ app.post('/api/v1/auth/login/guest', (req, res) => {
 
 app.post('/api/v1/auth/provider/:provider/login', (req, res) => {
     if(req.params.provider === 'steam' && typeof req.query.token === 'string') {
-        const providerId = getSteamIdFromToken(req.query.token)
+        const token = req.query.token
+        const providerId = getSteamIdFromToken(token)
         if(!providerId) {
+            res.status(500).end()
+            return
+        }
+        if(CHECK_STEAM_GAME_ID && !verifyGameId(token)) {
             res.status(500).end()
             return
         }

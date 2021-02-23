@@ -23,6 +23,7 @@ export const SAVE_TO_FILE = serverSettings.saveToFile // whether to save users' 
 export const SESSION_LENGTH = serverSettings.sessionLength // one day
 
 export const REQUIRE_STEAM = serverSettings.requireSteam // if true, guest logins will be disabled
+export const CHECK_STEAM_GAME_ID = serverSettings.checkSteamGameID
 
 export const WHITELIST_ENABLED = serverSettings.whitelistEnabled
 

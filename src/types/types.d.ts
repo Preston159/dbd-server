@@ -177,6 +177,7 @@ export type ServerSettingsJson = {
     saveToFile: boolean
     sessionLength: number
     requireSteam: boolean
+    checkSteamGameID: boolean
     whitelistEnabled: boolean
     rateLimitTime: number
     rateLimitCount: number
