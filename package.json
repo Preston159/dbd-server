@@ -34,6 +34,7 @@
     "test": "mocha test/test.js",
     "debug_linux": "DEBUG=express:* npm start 2>&1 | tee debug.log",
     "debug_win": "set DEBUG=express:* && npm start > debug.log 2>&1",
+    "pregen-docs": "echo \"Note: on Windows, it may be necessary to run 'npm i -g typedoc' before generating docs.\"",
     "gen-docs": "npx typedoc --name \"DbD Dev Server\" --includeVersion --readme none src/"
   },
   "author": "Preston Petrie",
