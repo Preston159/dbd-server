@@ -14,6 +14,7 @@ import * as fs from 'fs'
 import HJSON from 'hjson'
 
 import * as StartingValues from './starting-values.js'
+import { isInteger } from './util.js'
 
 import key from '../private/savekey.js'
 const iv = ''
@@ -180,6 +181,10 @@ export function saveFileExists(userId: string): Promise<boolean> {
 
 export function setPlayerPerkLevel(userId: string, characterId: number, perkId: string, level: number): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
+        if(level < 1 || level > 4 || !isInteger(level)) {
+            reject(new Error('Invalid perk level provided'))
+            return
+        }
         void saveFileExists(userId).then((exists) => {
             if(!exists) {
                 resolve(false)

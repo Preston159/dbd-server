@@ -484,3 +484,7 @@ export function getGameDateString(date: Date): string {
     const day = padNumber(date.getUTCDate(), 2)
     return `${year}-${month}-${day}T00:00:00`
 }
+
+export function isInteger(num: number): boolean {
+    return Math.floor(num) === num
+}
