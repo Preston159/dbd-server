@@ -5,10 +5,10 @@
 /**
  * @module Util
  */
+import type { StringPart, PlayerLevel, PlayerLevelInfo, CliCommand } from './types/types'
+
 import * as crypto from 'crypto'
 import { Response } from 'express'
-
-import type { StringPart, PlayerLevel, PlayerLevelInfo, CliCommand } from './types/types'
 
 export const LOGIN_TOKEN_REGEX = /[?&]token=[0-9a-f]+/i
 export const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/

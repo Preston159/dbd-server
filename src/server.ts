@@ -5,8 +5,8 @@
 /**
  * @module Server
  */
-import type { Session, ConfigValue, RequestMethod, RequestType, CliCommand, GameEvent, QueueData } from './types/types'
-import type { Response, Request } from 'express'
+import type { CliCommand, ConfigValue, GameEvent, QueueData, RequestMethod, RequestType, Session } from './types/types'
+import type { Request, Response } from 'express'
 
 import * as path from 'path'
 import * as fs from 'fs'
@@ -17,11 +17,11 @@ import cookieParser from 'cookie-parser'
 import nunjucks from 'nunjucks'
 import rateLimit from 'express-rate-limit'
 
-import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff, checkCmdMatch } from './util.js'
+import { API_PREFIX, IPV4_REGEX, checkCmdMatch, errorToCode, getLastPartOfId, removeToken, setAttachment, stringDiff, toArray, validateTypes, xpToPlayerLevel } from './util.js'
 import { getIp } from './ipaddr.js'
 import { decryptDbD, decryptSave, defaultSaveExists, encryptDbD, getDefaultSave, getSavePath, saveFileExists } from './saveman.js'
 import idToName from './idtoname.js'
-import { log, logReq, init as initLogger, logListItem, logListItems, logBlankLine, logError } from './logger.js'
+import { init as initLogger, log, logBlankLine, logError, logListItem, logListItems, logReq } from './logger.js'
 import { isCdn } from './cdn.js'
 import failureLogger from './failure-logger.js'
 import * as filters from './nunjucks-filters.js'
@@ -29,7 +29,7 @@ import debugResponse, { setResponse, unsetResponse } from './debug-response.js'
 import * as connectionTracker from './connection-tracker.js'
 import respondEmpty, { addAutoResponses } from './respond-empty.js'
 import { getSteamIdFromToken, verifyGameId } from './steam-manager.js'
-import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray, getActiveSessionCount, removeExpiredSessions, clearFakeSessions } from './session-manager.js'
+import { clearFakeSessions, createFakeSession, createSession, deleteSession, findSessionById, getActiveSessionCount, getSession, getSessionsAsArray, isSessionActive, removeExpiredSessions } from './session-manager.js'
 import * as StartingValues from './starting-values.js'
 import { CHECK_STEAM_GAME_ID, DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
 import { checkVersion } from './version-checker.js'

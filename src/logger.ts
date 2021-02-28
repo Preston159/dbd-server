@@ -5,7 +5,7 @@
 /**
  * @module Logger
  */
-import type { LoggerOptions, FileParts, RequestType } from './types/types'
+import type { FileParts, LoggerOptions, RequestType } from './types/types'
 
 import type { Request } from 'express'
 import * as fs from 'fs'
@@ -13,7 +13,7 @@ import type { WriteStream } from 'fs'
 import HJSON from 'hjson'
 import * as path from 'path'
 
-import { getDateString, API_PREFIX, formatString, padHexByte, padString, removeToken } from './util.js'
+import { API_PREFIX, formatString, getDateString, padHexByte, padString, removeToken } from './util.js'
 
 const FNAME_REGEX = /^(?<name>[A-Za-z0-9\-_\.]+)\.(?<ext>[A-Za-z]{1,4})$/
 const DIR_REGEX = /^[A-Za-z0-9\-_]+$/

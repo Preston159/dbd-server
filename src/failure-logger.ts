@@ -5,7 +5,7 @@
 /**
  * @module Failure Logger
  */
-import { Request, Response, NextFunction } from 'express'
+import { NextFunction, Request, Response } from 'express'
 
 import { logFailedRequest } from './logger.js'
 

@@ -5,7 +5,7 @@
 /**
  * @module Connection Tracker
  */
-import { Socket, Server as HttpServer } from 'net'
+import { Server as HttpServer, Socket } from 'net'
 import { Server as HttpsServer } from 'https'
 
 type Server = HttpServer | HttpsServer

@@ -11,7 +11,7 @@ import * as fs from 'fs'
 import HJSON from 'hjson'
 import * as path from 'path'
 
-import { rankToPips, xpToPlayerLevel, playerLevelToTotalXp } from './util.js'
+import { playerLevelToTotalXp, rankToPips, xpToPlayerLevel } from './util.js'
 
 const startingValues = HJSON.parse(fs.readFileSync(path.join('.', 'settings', 'starting-values.hjson')).toString()) as StartingValuesJson
 
