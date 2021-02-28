@@ -14,6 +14,7 @@ import * as fs from 'fs'
 import HJSON from 'hjson'
 
 import * as StartingValues from './starting-values.js'
+import { isInteger } from './util.js'
 
 import key from '../private/savekey.js'
 const iv = ''
@@ -164,6 +165,11 @@ export function getSavePath(userId?: string): string {
     }
 }
 
+/**
+ * Determines whether or not a save file exists for the specified user.
+ * @param userId the user's ID
+ * @returns a Promise which resolves to `true` if the save exists, `false` otherwise
+ */
 export function saveFileExists(userId: string): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
         const savePath = getSavePath(userId)
@@ -178,8 +184,20 @@ export function saveFileExists(userId: string): Promise<boolean> {
     })
 }
 
+/**
+ * Changes a perk level in a player's save file.
+ * @param userId        the user's ID
+ * @param characterId   the character ID
+ * @param perkId        the perk ID
+ * @param level         the level to set
+ * @returns a Promise which resolves to `true` if the change was successful; resolves `false` or rejects if unsuccessful
+ */
 export function setPlayerPerkLevel(userId: string, characterId: number, perkId: string, level: number): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
+        if(level < 1 || level > 4 || !isInteger(level)) {
+            reject(new Error('Invalid perk level provided'))
+            return
+        }
         void saveFileExists(userId).then((exists) => {
             if(!exists) {
                 resolve(false)

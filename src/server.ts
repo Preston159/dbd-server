@@ -977,6 +977,12 @@ app.use(failureLogger(true))
 
 //#region misc functions
 
+/**
+ * Writes a player save to a file, overwriting a previous save if it exists.<br>
+ * Note: This function is a nop if save to file is disabled or if the user is using a guest login.
+ * @param session the player's Session
+ * @returns a Promise which resolves when complete, or rejects with an error
+ */
 function writeSaveToFile(session: Session): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         if(!SAVE_TO_FILE) {
@@ -1018,10 +1024,17 @@ function writeSaveToFile(session: Session): Promise<void> {
 
 //#region shutdown
 
+/**
+ * Queues a forced shutdown, causing the server to shutdown forcefully in 10 seconds.<br>
+ * Used in case the graceful shutdown takes too long.
+ */
 function queueForcedShutdown() {
     setTimeout(() => process.exit(-1), 10_000)
 }
 
+/**
+ * Initiates a graceful shutdown. Automatically calls queueForcedShutdown().
+ */
 function initShutdown() {
     console.log()
     log('Initiating shutdown')
