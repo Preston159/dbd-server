@@ -436,7 +436,7 @@ app.get('/match/:matchId', (req, res) => {
 //#region bhvrapi
 // change krakenVersion to anything you'd like and it'll pop up on the login screen!
 app.get('/api/v1/version', (req, res) => {
-    setJson(res).send({"coreVersion":"13.80.0-dev.13-1","krakenVersion":" "}) 
+    setJson(res).send({"coreVersion":"13.80.0-dev.13-1","krakenVersion":""}) 
 })
 
 app.get('/api/v1/utils/contentVersion/version', (req, res) => {
