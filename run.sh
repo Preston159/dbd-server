@@ -1,2 +1,2 @@
 #!/bin/sh
-npm start
+npm run start_unix

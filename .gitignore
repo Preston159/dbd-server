@@ -13,7 +13,6 @@ ipaddr
 DEBUG
 private/*.old
 !src/templates/debug/
-package-lock.json
 *.js
 !private/savekey.js
 !.eslintrc.js

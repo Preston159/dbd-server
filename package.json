@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "dbd-server",
-  "version": "1.7.3-dev",
+  "version": "1.7.4",
   "description": "",
   "main": "server.js",
   "dependencies": {
@@ -16,12 +16,13 @@
     "https": "^1.0.0",
     "node-fetch": "^2.6.1",
     "nunjucks": "^3.2.2",
-    "typescript": "^3.9.7"
+    "typescript": "3.9.7"
   },
   "devDependencies": {
-    "@types/express": "^4.17.7",
-    "@types/node": "^14.0.27",
-    "@types/node-fetch": "^2.5.8",
+    "@types/express": "4.17.7",
+    "@types/node": "14.0.27",
+    "@types/node-fetch": "2.5.8",
+    "@types/express-serve-static-core": "4.17.7",
     "mocha": "^8.3.0",
     "request": "^2.88.2",
     "typedoc": "^0.20.27"
@@ -29,6 +30,8 @@
   "scripts": {
     "prestart": "npm run build",
     "start": "node build/server.js",
+    "prestart_unix": "npm run prestart",
+    "start_unix": "sudo node build/server.js",
     "build": "tsc",
     "lint": "eslint -c .eslintrc.cjs --ext .ts src/",
     "test": "mocha test/test.js",
