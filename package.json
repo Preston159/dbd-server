@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "dbd-server",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "",
   "main": "server.js",
   "dependencies": {
@@ -31,6 +31,8 @@
   "scripts": {
     "prestart": "npm-run-all --serial build",
     "start": "node build/server.js",
+    "prestart_unix": "npm run prestart",
+    "start_unix": "sudo node build/server.js",
     "build": "tsc",
     "lint": "eslint -c .eslintrc.cjs --ext .ts src/",
     "test": "mocha test/test.js",
