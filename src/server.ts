@@ -5,8 +5,8 @@
 /**
  * @module Server
  */
-import type { Session, ConfigValue, RequestMethod, RequestType, CliCommand, GameEvent, QueueData } from './types/types'
-import type { Response, Request } from 'express'
+import type { CliCommand, ConfigValue, GameEvent, QueueData, RequestMethod, RequestType, Session } from './types/types'
+import type { Request, Response } from 'express'
 
 import * as path from 'path'
 import * as fs from 'fs'
@@ -17,21 +17,21 @@ import cookieParser from 'cookie-parser'
 import nunjucks from 'nunjucks'
 import rateLimit from 'express-rate-limit'
 
-import { IPV4_REGEX, API_PREFIX, setAttachment, getLastPartOfId, validateTypes, errorToCode, xpToPlayerLevel, removeToken, toArray, stringDiff, checkCmdMatch, getSavePath } from './util.js'
+import { API_PREFIX, IPV4_REGEX, checkCmdMatch, errorToCode, getLastPartOfId, removeToken, setAttachment, stringDiff, toArray, validateTypes, xpToPlayerLevel } from './util.js'
 import { getIp } from './ipaddr.js'
-import { decryptDbD, decryptSave, defaultSaveExists, encryptDbD, getDefaultSave } from './saveman.js'
+import { decryptDbD, decryptSave, defaultSaveExists, encryptDbD, getDefaultSave, getSavePath, saveFileExists } from './saveman.js'
 import idToName from './idtoname.js'
-import { log, logReq, init as initLogger, logListItem, logListItems, logBlankLine, logError } from './logger.js'
+import { init as initLogger, log, logBlankLine, logError, logListItem, logListItems, logReq } from './logger.js'
 import { isCdn } from './cdn.js'
 import failureLogger from './failure-logger.js'
 import * as filters from './nunjucks-filters.js'
 import debugResponse, { setResponse, unsetResponse } from './debug-response.js'
 import * as connectionTracker from './connection-tracker.js'
 import respondEmpty, { addAutoResponses } from './respond-empty.js'
-import { getSteamIdFromToken } from './steam-manager.js'
-import { isSessionActive, getSession, createSession, deleteSession, findSessionById, createFakeSession, getSessionsAsArray, getActiveSessionCount, removeExpiredSessions, clearFakeSessions } from './session-manager.js'
+import { getSteamIdFromToken, verifyGameId } from './steam-manager.js'
+import { clearFakeSessions, createFakeSession, createSession, deleteSession, findSessionById, getActiveSessionCount, getSession, getSessionsAsArray, isSessionActive, removeExpiredSessions } from './session-manager.js'
 import * as StartingValues from './starting-values.js'
-import { DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
+import { CHECK_STEAM_GAME_ID, DEBUG_REQUIRE_HTTPS, LOGIN_LIMIT_COUNT, RATE_LIMIT_COUNT, RATE_LIMIT_TIME, REQUIRE_STEAM, SAVE_TO_FILE, SESSION_LENGTH, WHITELIST_ENABLED } from './settings.js'
 import { checkVersion } from './version-checker.js'
 import { loadAndEncryptJson } from './jsonman.js'
 import { getGameEventData } from './events.js'
@@ -434,9 +434,9 @@ app.get('/match/:matchId', (req, res) => {
 //#endregion
 
 //#region bhvrapi
-
+// change krakenVersion to anything you'd like and it'll pop up on the login screen!
 app.get('/api/v1/version', (req, res) => {
-    setJson(res).send(VERSIONS_STRING)
+    setJson(res).send({"coreVersion":"13.80.0-dev.13-1","krakenVersion":""})
 })
 
 app.get('/api/v1/utils/contentVersion/version', (req, res) => {
@@ -480,8 +480,13 @@ app.post('/api/v1/auth/login/guest', (req, res) => {
 
 app.post('/api/v1/auth/provider/:provider/login', (req, res) => {
     if(req.params.provider === 'steam' && typeof req.query.token === 'string') {
-        const providerId = getSteamIdFromToken(req.query.token)
+        const token = req.query.token
+        const providerId = getSteamIdFromToken(token)
         if(!providerId) {
+            res.status(500).end()
+            return
+        }
+        if(CHECK_STEAM_GAME_ID && !verifyGameId(token)) {
             res.status(500).end()
             return
         }
@@ -846,6 +851,10 @@ app.post('/api/v1/match/:matchId/register', (req, res) => {
     sendJson(res, response)
 })
 
+app.get('/api/v1/match', (req, res) => {
+    sendJson(res, createMatchResponse(''))
+})
+
 app.get('/api/v1/match/:matchId', (req, res) => {
     const bhvrSession = req.cookies.bhvrSession as string
     if(!isSessionActive(bhvrSession)) {
@@ -968,6 +977,12 @@ app.use(failureLogger(true))
 
 //#region misc functions
 
+/**
+ * Writes a player save to a file, overwriting a previous save if it exists.<br>
+ * Note: This function is a nop if save to file is disabled or if the user is using a guest login.
+ * @param session the player's Session
+ * @returns a Promise which resolves when complete, or rejects with an error
+ */
 function writeSaveToFile(session: Session): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         if(!SAVE_TO_FILE) {
@@ -1005,28 +1020,21 @@ function writeSaveToFile(session: Session): Promise<void> {
     })
 }
 
-function saveFileExists(userId: string): Promise<boolean> {
-    return new Promise<boolean>((resolve) => {
-        const savePath = getSavePath(userId)
-        fs.stat(savePath, (err) => {
-            if(err) {
-                resolve(false)
-                return
-            }
-            resolve(true)
-            return
-        })
-    })
-}
-
 //#endregion
 
 //#region shutdown
 
+/**
+ * Queues a forced shutdown, causing the server to shutdown forcefully in 10 seconds.<br>
+ * Used in case the graceful shutdown takes too long.
+ */
 function queueForcedShutdown() {
     setTimeout(() => process.exit(-1), 10_000)
 }
 
+/**
+ * Initiates a graceful shutdown. Automatically calls queueForcedShutdown().
+ */
 function initShutdown() {
     console.log()
     log('Initiating shutdown')

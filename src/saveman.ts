@@ -14,6 +14,7 @@ import * as fs from 'fs'
 import HJSON from 'hjson'
 
 import * as StartingValues from './starting-values.js'
+import { isInteger } from './util.js'
 
 import key from '../private/savekey.js'
 const iv = ''
@@ -150,4 +151,93 @@ export function getDefaultSave(): string {
         return ''
     }
     return DEFAULT_SAVE
+}
+
+/**
+ * Returns the path where save files are stored, or the path for a specific user's save if `userId` is specified.
+ * @param userId the user ID
+ */
+export function getSavePath(userId?: string): string {
+    if(userId) {
+        return path.join('.', 'saves', `save_${userId}`)
+    } else {
+        return path.join('.', 'saves')
+    }
+}
+
+/**
+ * Determines whether or not a save file exists for the specified user.
+ * @param userId the user's ID
+ * @returns a Promise which resolves to `true` if the save exists, `false` otherwise
+ */
+export function saveFileExists(userId: string): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+        const savePath = getSavePath(userId)
+        fs.stat(savePath, (err) => {
+            if(err) {
+                resolve(false)
+                return
+            }
+            resolve(true)
+            return
+        })
+    })
+}
+
+/**
+ * Changes a perk level in a player's save file.
+ * @param userId        the user's ID
+ * @param characterId   the character ID
+ * @param perkId        the perk ID
+ * @param level         the level to set
+ * @returns a Promise which resolves to `true` if the change was successful; resolves `false` or rejects if unsuccessful
+ */
+export function setPlayerPerkLevel(userId: string, characterId: number, perkId: string, level: number): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+        if(level < 1 || level > 4 || !isInteger(level)) {
+            reject(new Error('Invalid perk level provided'))
+            return
+        }
+        void saveFileExists(userId).then((exists) => {
+            if(!exists) {
+                resolve(false)
+                return
+            }
+            const savePath = getSavePath(userId)
+            fs.readFile(savePath, { encoding: 'utf8' }, (err, data) => {
+                if(err) {
+                    reject(err)
+                    return
+                }
+                const save = decryptSave(data)
+                let found = false
+                for(const character of save.characterData) {
+                    if(character.key === characterId) {
+                        for(const item of character.data.inventory) {
+                            const [ perkName ] = item.i.split(',')
+                            if(perkName === perkId) {
+                                item.i = `${perkName},${level}`
+                                found = true
+                                break
+                            }
+                        }
+                        break
+                    }
+                }
+                if(found) {
+                    const encryptedSave = encryptDbD(Buffer.from(JSON.stringify(save), 'utf16le'))
+                    fs.writeFile(savePath, encryptedSave, (writeErr) => {
+                        if(writeErr) {
+                            reject(writeErr)
+                            return
+                        }
+                        resolve(true)
+                        return
+                    })
+                } else {
+                    resolve(false)
+                }
+            })
+        })
+    })
 }

@@ -5,9 +5,9 @@
 /**
  * @module Debug Response
  */
-import { Request, Response, NextFunction } from 'express'
+import type { RequestMethod } from './types/types'
 
-import { RequestMethod } from './types/types'
+import { NextFunction, Request, Response } from 'express'
 
 type DebugResponse = {
     contentType: string

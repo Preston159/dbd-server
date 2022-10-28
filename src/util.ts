@@ -5,11 +5,10 @@
 /**
  * @module Util
  */
+import type { StringPart, PlayerLevel, PlayerLevelInfo, CliCommand } from './types/types'
+
 import * as crypto from 'crypto'
 import { Response } from 'express'
-import * as path from 'path'
-
-import type { StringPart, PlayerLevel, PlayerLevelInfo, CliCommand } from './types/types'
 
 export const LOGIN_TOKEN_REGEX = /[?&]token=[0-9a-f]+/i
 export const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
@@ -486,14 +485,6 @@ export function getGameDateString(date: Date): string {
     return `${year}-${month}-${day}T00:00:00`
 }
 
-/**
- * Returns the path where save files are stored, or the path for a specific user's save if `userId` is specified.
- * @param userId the user ID
- */
-export function getSavePath(userId?: string): string {
-    if(userId) {
-        return path.join('.', 'saves', `save_${userId}`)
-    } else {
-        return path.join('.', 'saves')
-    }
+export function isInteger(num: number): boolean {
+    return Math.floor(num) === num
 }

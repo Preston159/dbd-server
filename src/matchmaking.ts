@@ -6,6 +6,7 @@
  * @module Matchmaking
  */
 import type { KilledLobby, Lobby, QueueData, QueuedPlayer, Session, Side } from './types/types'
+
 import { genMatchUUID } from './util.js'
 
 const openLobbies: Lobby[] = []

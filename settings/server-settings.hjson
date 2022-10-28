@@ -12,6 +12,8 @@
     # if true, only clients connecting with Steam will be allowed to connect
     # i.e. nosteam won't work
     "requireSteam": false,
+    # if true, clients won't be able to connect if they're not playing the correct game
+    "checkSteamGameID": false,
     # if true, only IP addresses found in whitelist.txt will be able to connect
     "whitelistEnabled": false,
     # the amount of time, in seconds, over which rate limiting is applied

@@ -7,7 +7,7 @@
  */
 import type { RequestMethod } from './types/types'
 
-import { Request, Response, NextFunction } from 'express'
+import { NextFunction, Request, Response } from 'express'
 
 type AutoResponse = [ RequestMethod, string | RegExp, number ]
 

@@ -15,7 +15,6 @@
     "hjson": "^3.2.2",
     "https": "^1.0.0",
     "node-fetch": "^2.6.1",
-    "npm-run-all": "^4.1.5",
     "nunjucks": "^3.2.2",
     "typescript": "3.9.7"
   },
@@ -29,7 +28,7 @@
     "typedoc": "^0.20.27"
   },
   "scripts": {
-    "prestart": "npm-run-all --serial build",
+    "prestart": "npm run build",
     "start": "node build/server.js",
     "prestart_unix": "npm run prestart",
     "start_unix": "sudo node build/server.js",
@@ -38,7 +37,9 @@
     "test": "mocha test/test.js",
     "debug_linux": "DEBUG=express:* npm start 2>&1 | tee debug.log",
     "debug_win": "set DEBUG=express:* && npm start > debug.log 2>&1",
-    "gen-docs": "npx typedoc --name \"DbD Dev Server\" --includeVersion --readme none src/"
+    "pregen-docs": "echo \"NOTE: If you get an error on Windows, run 'npm i -g typedoc' then 'npm run gen-docs-win'.\"",
+    "gen-docs": "npx typedoc --name \"DbD Dev Server\" --includeVersion --readme none src/",
+    "gen-docs-win": "typedoc --name \"DbD Dev Server\" --includeVersion --readme none src/"
   },
   "author": "Preston Petrie",
   "license": "GPL-3.0-only"

@@ -15,7 +15,7 @@ import { encryptDbD } from './saveman.js'
 import { getGameDateString } from './util.js'
 
 // load event config data
-const events = HJSON.parse(fs.readFileSync(path.join('.', 'settings', 'events.hjson')).toString()) as EventsJson
+const eventConfig = HJSON.parse(fs.readFileSync(path.join('.', 'settings', 'events.hjson')).toString()) as EventsJson
 
 /**
  * Returns the encrypted event data which should be sent to the client.
@@ -25,10 +25,10 @@ export function getGameEventData(event?: GameEvent): string {
     const eventData = JSON.parse(fs.readFileSync(path.join('.', 'json', 'specialEventsContent.json')).toString()) as SpecialEventsContent
     const now = new Date()
     const end = new Date()
-    end.setDate(end.getDate() + 180)
+    end.setDate(end.getDate() + eventConfig.length)
 
     for(const gameEvent of eventData.specialEvents) {
-        if((!event && events[gameEvent.eventId]) || (event && gameEvent.eventId === event)) {
+        if((!event && eventConfig[gameEvent.eventId]) || (event && gameEvent.eventId === event)) {
             gameEvent.mainEndTime = getGameDateString(end)
             gameEvent.postEndTime = getGameDateString(end)
             gameEvent.startTime = getGameDateString(now)

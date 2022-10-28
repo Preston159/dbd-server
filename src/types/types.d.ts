@@ -27,7 +27,7 @@ export type Session = {
     steamId?: string
 }
 
-export type Region = 'ap-south-1' |'eu-west-1' |'ap-southeast-1' |'ap-southeast-2' |'eu-central-1' |'ap-northeast-2' |'ap-northeast-1' |'us-east-1' |'sa-east-1' |'us-west-2'
+export type Region = 'ap-south-1' | 'eu-west-1' | 'ap-southeast-1' | 'ap-southeast-2' | 'eu-central-1' | 'ap-northeast-2' | 'ap-northeast-1' | 'us-east-1' | 'sa-east-1' | 'us-west-2'
 
 export type RegionDecencies = {
     good: Region[]
@@ -177,6 +177,7 @@ export type ServerSettingsJson = {
     saveToFile: boolean
     sessionLength: number
     requireSteam: boolean
+    checkSteamGameID: boolean
     whitelistEnabled: boolean
     rateLimitTime: number
     rateLimitCount: number
@@ -184,6 +185,7 @@ export type ServerSettingsJson = {
 }
 
 export type EventsJson = {
+    length: number
     Halloween2017: boolean
     Winter2017: boolean
     Lunar: boolean
@@ -206,8 +208,15 @@ export type SpecialEventsContent = {
 }
 
 export type SaveData = Record<string, unknown> & {
-    characterData: { key: number }[]
     playerUId: string
     experience: number
     bonusExperience: number
+    characterData: {
+        key: number
+        data: {
+            inventory: {
+                i: string
+            }[]
+        }
+    }[]
 }

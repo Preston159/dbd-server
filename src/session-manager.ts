@@ -5,9 +5,9 @@
 /**
  * @module Session Manager
  */
-import type { Session, ClientIds } from './types/types'
+import type { ClientIds, Session } from './types/types'
 
-import { genFriendlyRandomString, mapToArray, genUUID } from './util.js'
+import { genFriendlyRandomString, genUUID, mapToArray } from './util.js'
 import * as StartingValues from './starting-values.js'
 
 const activeSessions: Map<string, Session> = new Map<string, Session>()
